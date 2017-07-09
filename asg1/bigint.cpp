@@ -11,11 +11,11 @@ using namespace std;
 #include "relops.h"
 
 bigint::bigint (long that): uvalue (that), is_negative (that < 0) {
-	DEBUGF ('~', this << " -> " << uvalue)
+   DEBUGF ('~', this << " -> " << uvalue)
 }
 
 bigint::bigint (const ubigint& uvalue, bool is_negative):
-	uvalue(uvalue), is_negative(is_negative) {
+   uvalue(uvalue), is_negative(is_negative) {
 	}
 
 bigint::bigint (const string& that) {
@@ -30,6 +30,7 @@ bigint bigint::operator+ () const {
 bigint bigint::operator- () const {
 	return {uvalue, not is_negative};
 }
+
 //checks to see if both values are negative
 //if both negative, add together than add negative sign to it
 bigint bigint::operator+ (const bigint& that) const {
@@ -60,7 +61,7 @@ bigint bigint::operator+ (const bigint& that) const {
 			}
 
 		}
-	else{
+		else{
 			return uvalue - that.uvalue;
 		}
 	}
@@ -82,7 +83,7 @@ bigint bigint::operator- (const bigint& that) const {
 			return {that.uvalue - uvalue, false};
 		}
 		else {
-			return 0;
+			return that.uvalue - uvalue;
 		}
 	}
 
@@ -144,9 +145,9 @@ bool bigint::operator== (const bigint& that) const {
 }
 
 bool bigint::operator< (const bigint& that) const {
-	if (is_negative != that.is_negative) return is_negative;
-	return is_negative ? uvalue > that.uvalue
-		: uvalue < that.uvalue;
+   if (is_negative != that.is_negative) return is_negative;
+   return is_negative ? uvalue > that.uvalue
+                      : uvalue < that.uvalue;
 }
 
 ostream& operator<< (ostream& out, const bigint& that) {

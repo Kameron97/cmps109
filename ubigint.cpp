@@ -1,21 +1,20 @@
-ubigint ubigint::operator* (const ubigint& that) const {
-   ubigint product;
-   int carry = 0;
-    int digit = 0;
+void ubigint::divide_by_2() {
+	int remainder = 0;
+	for (int i = ubig_value.size()-1; i >= 0; i--) {
+		int digitQuotient = 0;
+		if (remainder > 0) {
+			digitQuotient += remainder;
+			remainder = 0;
+		}
 
-   product.ubig_value.assign (ubig_value.size() +
-      that.ubig_value.size(), 0);
+		digitQuotient += ubig_value.at(i) / 2;
 
-   for (int i = 0; i < ubig_value.size();; i++){
-      carry = 0;
-      for (int j = 0; j < tsize; j++){
-         digit = mult.ubig_value[i+j] +
-                  (ubig_value[i] * that.ubig_value[j]) + carry;
-         mult.ubig_value[i+j] = digit%10;
-         carry = digit/10;
-         mult.ubig_value[i+tsize] = carry;
-      }
-   }
-   ubigint::remove_0s(mult);
-   return mult;
+		if (ubig_value.at(i) % 2) {
+			remainder = 5;
+		}
+
+		ubig_value.at(i) = digitQuotient;
+	}
+
+	while (ubig_value.size() > 0 and ubig_value.back() == 0) ubig_value.pop_back();
 }

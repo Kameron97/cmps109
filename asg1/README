@@ -1,0 +1,31 @@
+Kameron Gill
+1476833
+Kgill2@ucsc.edu
+
+
+This program has all the functions and abilitites of dc.
+
+
+Files included:
+         bigint.ccp        Modified by Me
+         bigint.h          left the same as starter
+         debug.cpp         left the same as starter
+         debug.h           left the same as starter
+         iterstack.h       left the same as starter
+         libfns.cpp        left the same as starter
+         libfnc.h          left the same as starter
+         main.cpp          left the same as starter
+         Makefile          left the same as starter
+         Makefile.dep      left the same as starter
+         relops.h          left the same as starter
+         scanner.ccp       left the same as starter
+         scanner.h         left the same as starter
+         ubigint.ccp       Modified by Me
+         ubigint.h         slightly modified by me
+         util.cpp          left the same as starter
+         util.h            left the same as starter
+
+
+
+In Order to compile the program, simply type "make." All functionalities in my program is smilar to
+that of dc.
