@@ -1,4 +1,4 @@
-// $Id: bigint.cpp,v 1.2 2017-07-09 17:24:45-07 - - $
+// $Id: bigint.cpp,v 1.7 2017-07-09 22:52:42-07 - - $
 
 #include <cstdlib>
 #include <exception>
@@ -97,12 +97,12 @@ bigint bigint::operator- (const bigint& that) const {
       }
    }
    else{
-	   if(uvalue< that.uvalue){
-		   return {that.uvalue - uvalue, true};
-	   }
-	   else{
-		   return uvalue - that.uvalue;
-	   }
+      if(uvalue< that.uvalue){
+         return {that.uvalue - uvalue, true};
+       }
+       else{
+           return uvalue - that.uvalue;
+        }
 
 
 }

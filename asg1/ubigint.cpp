@@ -1,4 +1,4 @@
-// $Id: ubigint.cpp,v 1.1 2017-07-09 17:17:53-07 - - $
+// $Id: ubigint.cpp,v 1.4 2017-07-09 17:41:05-07 - - $
 
 #include <cctype>
 #include <cstdlib>
@@ -93,7 +93,8 @@ ubigint ubigint::operator+ (const ubigint& that) const {
    //checks to see if input is larger than another
    if (ubig_value.size() > that.ubig_value.size()) {
       while ( i < ubig_value.size()) {
-         //if an operand IS larger than another, pushes back the stack so they match
+         //if an operand IS larger than another, 
+         //pushes back the stack so they match
          sum.ubig_value.push_back(ubig_value.at(i));
          i++;
       }
@@ -164,7 +165,8 @@ ubigint ubigint::operator- (const ubigint& that) const {
 
    }
     //reset
-   while (difference.ubig_value.size() > 0 and difference.ubig_value.back() == 0) {
+   while (difference.ubig_value.size() > 0 
+         and difference.ubig_value.back() == 0) {
       difference.ubig_value.pop_back();
    }
 
@@ -194,7 +196,8 @@ ubigint ubigint::operator* (const ubigint& that) const {
    }
 
 
-   while (product.ubig_value.size() > 0 and product.ubig_value.back() == 0) {
+   while (product.ubig_value.size() > 0
+          and product.ubig_value.back() == 0) {
       product.ubig_value.pop_back();
    }
    return product;
@@ -318,7 +321,8 @@ ostream& operator<< (ostream& out, const ubigint& that) {
    if (that.ubig_value.size() > 0) {
       int charLength = 0;
       while (  i >= 0) {
-         if (charLength%(outLength-1) == 0 and charLength != 0) out << "\\" << endl;
+         if (charLength%(outLength-1) == 0 
+              and charLength != 0) out << "\\" << endl;
          out << static_cast<char>(that.ubig_value.at(i) + '0');
          charLength++;
             i--;
