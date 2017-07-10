@@ -72,76 +72,76 @@ bigint bigint::operator+ (const bigint& that) const {
 }
 
 bigint bigint::operator- (const bigint& that) const {
-	//checks to see if both numbers are negative
-	//if 1st>2nd, then it will be negative
-	if (is_negative and that.is_negative){
-		if (uvalue > that.uvalue ){
-			return {uvalue - that.uvalue, true};
-		}
-		//if 2nd>1st, then must be positive
-		else if (that.uvalue > uvalue ){
-			return {that.uvalue - uvalue, false};
-		}
-		else {
-			return that.uvalue - uvalue;
-		}
-	}
+   //checks to see if both numbers are negative
+   //if 1st>2nd, then it will be negative
+   if (is_negative and that.is_negative){
+      if (uvalue > that.uvalue ){
+         return {uvalue - that.uvalue, true};
+      }
+      //if 2nd>1st, then must be positive
+      else if (that.uvalue > uvalue ){
+         return {that.uvalue - uvalue, false};
+      }
+      else {
+         return that.uvalue - uvalue;
+      }
+   }
 
-	//if 1st or 2nd are negative, then it will add them together
-	else if (is_negative or that.is_negative){
-		if (is_negative){
-			return {uvalue + that.uvalue, true};
-		}
-		else{
-			return {uvalue + that.uvalue, false};
-		}
-	}
+   //if 1st or 2nd are negative, then it will add them together
+   else if (is_negative or that.is_negative){
+      if (is_negative){
+         return {uvalue + that.uvalue, true};
+      }
+      else{
+         return {uvalue + that.uvalue, false};
+      }
+   }
 
-	ubigint result = uvalue - that.uvalue;
-	return result;
+   ubigint result = uvalue - that.uvalue;
+   return result;
 }
 
 bigint bigint::operator* (const bigint& that) const {
-	//checks to see if both inpputs are negative or  positive
-	if( (is_negative and that.is_negative) or
-			(not is_negative and not that.is_negative) ){
-		bigint result = uvalue * that.uvalue;
-		return result;
-	}
-	else{
-		return {uvalue * that.uvalue, true};
-	}
+   //checks to see if both inpputs are negative or  positive
+   if( (is_negative and that.is_negative) or
+         (not is_negative and not that.is_negative) ){
+      bigint result = uvalue * that.uvalue;
+      return result;
+   }
+   else{
+      return {uvalue * that.uvalue, true};
+   }
 }
 
 
 //same logic as operator*
 bigint bigint::operator/ (const bigint& that) const {
-	//checks to see if both inpputs are negative or  positive
-	if( (is_negative and that.is_negative) or
-			(not is_negative and not that.is_negative) ){
-		bigint result = uvalue / that.uvalue;
-		return result;
-	}
-	else{
-		return {uvalue / that.uvalue, true};
-	}
+   //checks to see if both inpputs are negative or  positive
+   if( (is_negative and that.is_negative) or
+         (not is_negative and not that.is_negative) ){
+      bigint result = uvalue / that.uvalue;
+      return result;
+   }
+   else{
+      return {uvalue / that.uvalue, true};
+   }
 }
 
 //same logic as operator*
 bigint bigint::operator% (const bigint& that) const {
-	//checks to see if both inpputs are negative or  positive
-	if( (is_negative and that.is_negative) or
-			(not is_negative and not that.is_negative) ){
-		bigint result = uvalue % that.uvalue;
-		return result;
-	}
-	else{
-		return {uvalue  % that.uvalue, true};
-	}
+   //checks to see if both inpputs are negative or  positive
+   if( (is_negative and that.is_negative) or
+         (not is_negative and not that.is_negative) ){
+      bigint result = uvalue % that.uvalue;
+      return result;
+   }
+   else{
+      return {uvalue  % that.uvalue, true};
+   }
 }
 
 bool bigint::operator== (const bigint& that) const {
-	return is_negative == that.is_negative and uvalue == that.uvalue;
+   return is_negative == that.is_negative and uvalue == that.uvalue;
 }
 
 bool bigint::operator< (const bigint& that) const {
