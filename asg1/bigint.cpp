@@ -96,9 +96,16 @@ bigint bigint::operator- (const bigint& that) const {
          return {uvalue + that.uvalue, false};
       }
    }
+   else{
+	   if(uvalue< that.uvalue){
+		   return {that.uvalue - uvalue, true};
+	   }
+	   else{
+		   return uvalue - that.uvalue;
+	   }
 
-   ubigint result = uvalue - that.uvalue;
-   return result;
+
+}
 }
 
 bigint bigint::operator* (const bigint& that) const {
