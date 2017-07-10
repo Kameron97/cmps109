@@ -1,4 +1,4 @@
-// $Id: bigint.cpp,v 1.76 2016-06-14 16:34:24-07 - - $
+// $Id: bigint.cpp,v 1.2 2017-07-09 17:24:45-07 - - $
 
 #include <cstdlib>
 #include <exception>
@@ -16,59 +16,59 @@ bigint::bigint (long that): uvalue (that), is_negative (that < 0) {
 
 bigint::bigint (const ubigint& uvalue, bool is_negative):
    uvalue(uvalue), is_negative(is_negative) {
-	}
+}
 
 bigint::bigint (const string& that) {
-	is_negative = that.size() > 0 and that[0] == '_';
-	uvalue = ubigint (that.substr (is_negative ? 1 : 0));
+   is_negative = that.size() > 0 and that[0] == '_';
+   uvalue = ubigint (that.substr (is_negative ? 1 : 0));
 }
 
 bigint bigint::operator+ () const {
-	return *this;
+   return *this;
 }
 
 bigint bigint::operator- () const {
-	return {uvalue, not is_negative};
+   return {uvalue, not is_negative};
 }
 
 //checks to see if both values are negative
 //if both negative, add together than add negative sign to it
 bigint bigint::operator+ (const bigint& that) const {
-	if (is_negative and that.is_negative){
-		return {uvalue+that.uvalue, true};
-	}
-	//checks to see if one of the numbers is negative
-	//if they are equal in value, return 0
-	//if first>2nd, do return (1st-2nd, negative)
-	//if 2nd> 1st do return (1st-2nd, positive)
-	//vice versa for 2nd number
-	else if (is_negative or that.is_negative){
-		if (uvalue > that.uvalue){
-			if (is_negative){
-				return {uvalue - that.uvalue, true};
-			}
-			else{
-				return {uvalue - that.uvalue, false};
-			}
-		}
-		//that.uvalue >uvalue
-		else if (that.uvalue > uvalue){
-			if (that.is_negative){
-				return {that.uvalue - uvalue, true};
-			}
-			else{
-				return {that.uvalue - uvalue, false};
-			}
+   if (is_negative and that.is_negative){
+      return {uvalue+that.uvalue, true};
+}
+   //checks to see if one of the numbers is negative
+   //if they are equal in value, return 0
+   //if first>2nd, do return (1st-2nd, negative)
+   //if 2nd> 1st do return (1st-2nd, positive)
+   //vice versa for 2nd number
+   else if (is_negative or that.is_negative){
+      if (uvalue > that.uvalue){
+         if (is_negative){
+            return {uvalue - that.uvalue, true};
+         }
+         else{
+            return {uvalue - that.uvalue, false};
+         }
+      }
+         //that.uvalue >uvalue
+         else if (that.uvalue > uvalue){
+            if (that.is_negative){
+               return {that.uvalue - uvalue, true};
+               }
+            else{
+               return {that.uvalue - uvalue, false};
+            }
 
-		}
-		else{
-			return uvalue - that.uvalue;
-		}
-	}
+          }
+      else{
+         return uvalue - that.uvalue;
+      }
+   }
 
-	//if both positive, just add.
-	ubigint result = uvalue + that.uvalue;
-	return result;
+   //if both positive, just add.
+   ubigint result = uvalue + that.uvalue;
+   return result;
 }
 
 bigint bigint::operator- (const bigint& that) const {

@@ -1,4 +1,4 @@
-// $Id: scanner.cpp,v 1.19 2016-06-23 17:19:42-07 - - $
+// $Id: scanner.cpp,v 1.1 2017-07-09 17:17:53-07 - - $
 
 #include <cassert>
 #include <iostream>

@@ -1,4 +1,4 @@
-// $Id: bigint.h,v 1.29 2016-03-24 19:30:57-07 - - $
+// $Id: bigint.h,v 1.1 2017-07-09 17:17:53-07 - - $
 
 #ifndef __BIGINT_H__
 #define __BIGINT_H__

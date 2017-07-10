@@ -1,4 +1,4 @@
-// $Id: scanner.h,v 1.12 2016-06-23 17:22:50-07 - - $
+// $Id: scanner.h,v 1.1 2017-07-09 17:17:53-07 - - $
 
 #ifndef __SCANNER_H__
 #define __SCANNER_H__

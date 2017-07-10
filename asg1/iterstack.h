@@ -1,4 +1,4 @@
-// $Id: iterstack.h,v 1.13 2014-06-26 17:21:55-07 - - $
+// $Id: iterstack.h,v 1.1 2017-07-09 17:17:53-07 - - $
 
 // 
 // The class std::stack does not provide an iterator, which is

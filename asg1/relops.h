@@ -1,4 +1,4 @@
-// $Id: relops.h,v 1.2 2016-06-13 13:47:33-07 - - $
+// $Id: relops.h,v 1.1 2017-07-09 17:17:53-07 - - $
 
 //
 // Assuming that for any given type T, there are operators
