@@ -1,5 +1,4 @@
 // $Id: commands.h,v 1.6 2016-01-31 22:09:08-08 - - $
-// Ana Carolina Alves - adalves
 
 #ifndef __COMMANDS_H__
 #define __COMMANDS_H__

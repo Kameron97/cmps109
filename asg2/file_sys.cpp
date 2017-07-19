@@ -1,5 +1,4 @@
 // $Id: file_sys.cpp,v 1.41 2016-01-31 23:43:09-08 - - $
-// Ana Carolina Alves - adalves
 
 #include <iostream>
 #include <stdexcept>

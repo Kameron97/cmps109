@@ -1,5 +1,4 @@
 // $Id: commands.cpp,v 1.22 2016-01-31 22:09:08-08 - - $
-// Ana Carolina Alves - adalves
 
 #include "commands.h"
 #include "debug.h"

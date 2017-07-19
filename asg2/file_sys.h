@@ -1,5 +1,4 @@
 // $Id: file_sys.h,v 1.29 2016-01-31 23:31:54-08 - - $
-// Ana Carolina Alves - adalves
 
 #ifndef __INODE_H__
 #define __INODE_H__

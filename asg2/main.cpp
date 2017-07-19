@@ -1,5 +1,4 @@
 // $Id: main.cpp,v 1.2 2016-01-30 02:29:51-08 - - $
-// Ana Carolina Alves - adalves
 
 #include <cstdlib>
 #include <iostream>
