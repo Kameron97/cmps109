@@ -1,4 +1,5 @@
-// $Id: main.cpp,v 1.9 2016-01-14 16:16:52-08 - - $
+// $Id: main.cpp,v 1.2 2016-01-30 02:29:51-08 - - $
+// Ana Carolina Alves - adalves
 
 #include <cstdlib>
 #include <iostream>
@@ -14,7 +15,7 @@ using namespace std;
 #include "util.h"
 
 // scan_options
-//    Options analysis:  The only option is -Dflags. 
+//    Options analysis:  The only option is -Dflags.
 
 void scan_options (int argc, char** argv) {
    opterr = 0;
@@ -36,7 +37,6 @@ void scan_options (int argc, char** argv) {
    }
 }
 
-
 // main -
 //    Main program which loops reading commands until end of file.
 
@@ -53,23 +53,27 @@ int main (int argc, char** argv) {
          try {
             // Read a line, break at EOF, and echo print the prompt
             // if one is needed.
-            cout << state.prompt();
+            cout << state.get_prompt();
             string line;
             getline (cin, line);
             if (cin.eof()) {
                if (need_echo) cout << "^D";
                cout << endl;
                DEBUGF ('y', "EOF");
+               wordvec temp = {"exit"};
+               fn_exit (state, temp);
                break;
             }
             if (need_echo) cout << line << endl;
-   
+
             // Split the line into words and lookup the appropriate
             // function.  Complain or call it.
             wordvec words = split (line, " \t");
             DEBUGF ('y', "words = " << words);
-            command_fn fn = find_command_fn (words.at(0));
-            fn (state, words);
+            if (!words.empty()) {
+               command_fn fn = find_command_fn (words.at(0));
+               fn (state, words);
+            }
          }catch (command_error& error) {
             // If there is a problem discovered in any function, an
             // exn is thrown and printed here.
@@ -82,4 +86,3 @@ int main (int argc, char** argv) {
 
    return exit_status_message();
 }
-

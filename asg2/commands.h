@@ -1,4 +1,5 @@
-// $Id: commands.h,v 1.11 2016-01-14 14:45:21-08 - - $
+// $Id: commands.h,v 1.6 2016-01-31 22:09:08-08 - - $
+// Ana Carolina Alves - adalves
 
 #ifndef __COMMANDS_H__
 #define __COMMANDS_H__
@@ -25,6 +26,7 @@ class command_error: public runtime_error {
 
 // execution functions -
 
+void fn_hash   (inode_state& state, const wordvec& words);
 void fn_cat    (inode_state& state, const wordvec& words);
 void fn_cd     (inode_state& state, const wordvec& words);
 void fn_echo   (inode_state& state, const wordvec& words);
@@ -37,10 +39,15 @@ void fn_prompt (inode_state& state, const wordvec& words);
 void fn_pwd    (inode_state& state, const wordvec& words);
 void fn_rm     (inode_state& state, const wordvec& words);
 void fn_rmr    (inode_state& state, const wordvec& words);
-void fn_hash   (inode_state& state, const wordvec& words);
-
 
 command_fn find_command_fn (const string& command);
+
+// helper functions -
+
+void print_file_ls (inode_state& state, string& pathname);
+void print_dir_ls (inode_state& state, inode_ptr& ptr);
+void rm_r (inode_state& state, const string& pathname, bool recursive);
+void terminate_program (inode_state& state);
 
 // exit_status_message -
 //    Prints an exit message and returns the exit status, as recorded
