@@ -1,0 +1,8 @@
+hello:        ELF 64-bit LSB executable, x86-64, version 1 (SYSV), dynamically linked, interpreter /lib64/ld-linux-x86-64.so.2, for GNU/Linux 2.6.32, BuildID[sha1]=d761bbfb710bde62ce258c3b70bbea899c74a831, with debug_info, not stripped
+hello.cpp:    C source, ASCII text
+hello.h:      C source, ASCII text
+hello.o:      ELF 64-bit LSB relocatable, x86-64, version 1 (SYSV), with debug_info, not stripped
+main.cpp:     C source, ASCII text
+main.o:       ELF 64-bit LSB relocatable, x86-64, version 1 (SYSV), with debug_info, not stripped
+Makefile:     ASCII text
+Makefile.dep: ASCII text

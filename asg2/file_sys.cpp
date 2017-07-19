@@ -8,6 +8,8 @@ using namespace std;
 
 #include "debug.h"
 #include "file_sys.h"
+#include "commands.h"
+
 
 int inode::next_inode_nr {1};
 
@@ -26,11 +28,37 @@ ostream& operator<< (ostream& out, file_type type) {
 }
 
 inode_state::inode_state() {
-   DEBUGF ('i', "root = " << root << ", cwd = " << cwd
+    DEBUGF ('i', "root = " << root << ", cwd = " << cwd
           << ", prompt = \"" << prompt() << "\"");
+
+  root = make_shared<inode>(file_type::DIRECTORY_TYPE);
+  getContent(root) -> make_root(root);
+  cwd = root;
 }
 
 const string& inode_state::prompt() { return prompt_; }
+
+void inode_state::setPrompt(string x){
+     prompt_ = x;
+  }
+
+  void inode_state::setCwd (inode_ptr ptr){
+       cwd = ptr;
+    }
+
+
+ base_file_ptr inode_state::getContent (inode_ptr ptr) {
+     return ptr -> contents;
+  }
+
+const inode_ptr inode_state::getRoot(){
+     return root;
+ }
+
+const inode_ptr inode_state::getCwd(){
+    return cwd;
+}
+
 
 ostream& operator<< (ostream& out, const inode_state& state) {
    out << "inode_state: root = " << state.root
@@ -55,7 +83,10 @@ int inode::get_inode_nr() const {
    return inode_nr;
 }
 
-
+void inode::set_name (const string& new_name) {
+   name = new_name;
+}
+
 file_error::file_error (const string& what):
             runtime_error (what) {
 }
@@ -65,23 +96,92 @@ size_t plain_file::size() const {
    DEBUGF ('i', "size = " << size);
    return size;
 }
+void directory::make_root (const inode_ptr root_ptr) {
+   dirents.insert (make_pair (".", root_ptr));
+   dirents.insert (make_pair ("..", root_ptr));
+   root_ptr -> set_name("/");
+}
 
 const wordvec& plain_file::readfile() const {
    DEBUGF ('i', data);
    return data;
 }
 
+
+wordvec inode_state::pathname_to_wordvec (const string& pathname) {
+   wordvec path;
+   string delimiter = "/";
+   size_t begin = 0, end = 0;
+
+   if (pathname.at(0) == '/') {
+      ++begin;
+   }
+   for (;;) {
+      if (begin == pathname.size()) break;
+      end = pathname.find_first_of(delimiter, begin);
+      if (end == string::npos) {
+         end = pathname.size();
+         path.push_back (pathname.substr (begin, end - begin));
+         DEBUGF ('i', "path " << path);
+         break;
+      }
+      path.push_back (pathname.substr (begin, end - begin));
+      DEBUGF ('i', "path " << end);
+      begin = end + 1;
+   }
+
+   return path;
+}
+
 void plain_file::writefile (const wordvec& words) {
    DEBUGF ('i', words);
+}
+
+inode_ptr inode_state::find_inode_ptr (const string& name,
+                                            inode_ptr& curr) {
+   map<string,inode_ptr> dirents = getContent (curr) -> get_dirents();
+   inode_ptr ptr = nullptr;
+
+   if (dirents.find (name) != dirents.end()) {
+      ptr = dirents.find (name) -> second;
+   }
+
+   return ptr;
+}
+
+inode_ptr inode_state::pathname_to_inode_ptr (const string& pathname) {
+   return wordvec_to_inode_ptr (pathname_to_wordvec (pathname));
+}
+
+inode_ptr inode_state::wordvec_to_inode_ptr (const wordvec& pathname) {
+   inode_ptr ptr = cwd;
+
+   if (pathname.empty()) {
+      return root;
+   }
+
+   for (string path: pathname) {
+      ptr = find_inode_ptr (path, ptr);
+      if (ptr == nullptr) break;
+   }
+
+   return ptr;
 }
 
 void plain_file::remove (const string&) {
    throw file_error ("is a plain file");
 }
 
+
+void plain_file::make_root (const inode_ptr) {
+   throw file_error ("is a plain file");
+}
+
 inode_ptr plain_file::mkdir (const string&) {
    throw file_error ("is a plain file");
 }
+
+
 
 inode_ptr plain_file::mkfile (const string&) {
    throw file_error ("is a plain file");
@@ -115,4 +215,3 @@ inode_ptr directory::mkfile (const string& filename) {
    DEBUGF ('i', filename);
    return nullptr;
 }
-

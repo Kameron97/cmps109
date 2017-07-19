@@ -15,11 +15,11 @@ using command_fn = void (*)(inode_state& state, const wordvec& words);
 using command_hash = unordered_map<string,command_fn>;
 
 // command_error -
-//    Extend runtime_error for throwing exceptions related to this 
+//    Extend runtime_error for throwing exceptions related to this
 //    program.
 
 class command_error: public runtime_error {
-   public: 
+   public:
       explicit command_error (const string& what);
 };
 
@@ -37,6 +37,8 @@ void fn_prompt (inode_state& state, const wordvec& words);
 void fn_pwd    (inode_state& state, const wordvec& words);
 void fn_rm     (inode_state& state, const wordvec& words);
 void fn_rmr    (inode_state& state, const wordvec& words);
+void fn_hash   (inode_state& state, const wordvec& words);
+
 
 command_fn find_command_fn (const string& command);
 
@@ -48,4 +50,3 @@ int exit_status_message();
 class ysh_exit: public exception {};
 
 #endif
-

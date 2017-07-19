@@ -42,6 +42,20 @@ class inode_state {
       inode_state& operator= (const inode_state&) = delete; // op=
       inode_state();
       const string& prompt();
+      void setPrompt(string x);
+      base_file_ptr getContent (inode_ptr);
+      const inode_ptr getRoot();
+      const inode_ptr getCwd();
+      inode_ptr wordvec_to_inode_ptr (const wordvec&);
+
+      void setCwd (inode_ptr);
+      wordvec pathname_to_wordvec (const string&);
+      inode_ptr pathname_to_inode_ptr (const string&);
+      inode_ptr find_inode_ptr (const string&, inode_ptr&);
+
+
+
+
 };
 
 // class inode -
@@ -55,7 +69,7 @@ class inode_state {
 //    number of dirents.  For a text file, the number of characters
 //    when printed (the sum of the lengths of each word, plus the
 //    number of words.
-//    
+//
 
 class inode {
    friend class inode_state;
@@ -63,9 +77,15 @@ class inode {
       static int next_inode_nr;
       int inode_nr;
       base_file_ptr contents;
+      string name;
+
    public:
       inode (file_type);
       int get_inode_nr() const;
+      void set_name (const string&);
+
+
+
 };
 
 
@@ -89,9 +109,14 @@ class base_file {
       virtual size_t size() const = 0;
       virtual const wordvec& readfile() const = 0;
       virtual void writefile (const wordvec& newdata) = 0;
+
       virtual void remove (const string& filename) = 0;
       virtual inode_ptr mkdir (const string& dirname) = 0;
       virtual inode_ptr mkfile (const string& filename) = 0;
+      virtual void make_root (inode_ptr root_ptr) = 0;
+      virtual map<string,inode_ptr> get_dirents() const = 0;
+
+
 };
 
 // class plain_file -
@@ -113,6 +138,11 @@ class plain_file: public base_file {
       virtual void remove (const string& filename) override;
       virtual inode_ptr mkdir (const string& dirname) override;
       virtual inode_ptr mkfile (const string& filename) override;
+      virtual void make_root (inode_ptr root_ptr) override;
+      virtual map<string,inode_ptr> get_dirents() const override;
+
+
+
 };
 
 // class directory -
@@ -125,7 +155,7 @@ class plain_file: public base_file {
 //    does not exist, or the subdirectory is not empty.
 //    Here empty means the only entries are dot (.) and dotdot (..).
 // mkdir -
-//    Creates a new directory under the current directory and 
+//    Creates a new directory under the current directory and
 //    immediately adds the directories dot (.) and dotdot (..) to it.
 //    Note that the parent (..) of / is / itself.  It is an error
 //    if the entry already exists.
@@ -144,7 +174,10 @@ class directory: public base_file {
       virtual void remove (const string& filename) override;
       virtual inode_ptr mkdir (const string& dirname) override;
       virtual inode_ptr mkfile (const string& filename) override;
+      virtual void make_root (inode_ptr root_ptr) override;
+      virtual map<string,inode_ptr> get_dirents() const override;
+
+
 };
 
 #endif
-

@@ -15,6 +15,8 @@ command_hash cmd_hash {
    {"prompt", fn_prompt},
    {"pwd"   , fn_pwd   },
    {"rm"    , fn_rm    },
+   {"#"     , fn_hash  },
+
 };
 
 command_fn find_command_fn (const string& cmd) {
@@ -65,6 +67,8 @@ void fn_ls (inode_state& state, const wordvec& words){
    DEBUGF ('c', state);
    DEBUGF ('c', words);
 }
+void fn_hash(inode_state&, const wordvec&) { }
+
 
 void fn_lsr (inode_state& state, const wordvec& words){
    DEBUGF ('c', state);
@@ -84,6 +88,7 @@ void fn_mkdir (inode_state& state, const wordvec& words){
 void fn_prompt (inode_state& state, const wordvec& words){
    DEBUGF ('c', state);
    DEBUGF ('c', words);
+   state.setPrompt(words[1]);
 }
 
 void fn_pwd (inode_state& state, const wordvec& words){
@@ -100,4 +105,3 @@ void fn_rmr (inode_state& state, const wordvec& words){
    DEBUGF ('c', state);
    DEBUGF ('c', words);
 }
-
