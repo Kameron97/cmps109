@@ -114,7 +114,6 @@ class base_file {
       virtual inode_ptr mkdir (const string& dirname) = 0;
       virtual inode_ptr mkfile (const string& filename) = 0;
       virtual void make_root (inode_ptr root_ptr) = 0;
-      virtual map<string,inode_ptr> get_dirents() const = 0;
 
 
 };
@@ -139,7 +138,6 @@ class plain_file: public base_file {
       virtual inode_ptr mkdir (const string& dirname) override;
       virtual inode_ptr mkfile (const string& filename) override;
       virtual void make_root (inode_ptr root_ptr) override;
-      virtual map<string,inode_ptr> get_dirents() const override;
 
 
 
@@ -175,7 +173,7 @@ class directory: public base_file {
       virtual inode_ptr mkdir (const string& dirname) override;
       virtual inode_ptr mkfile (const string& filename) override;
       virtual void make_root (inode_ptr root_ptr) override;
-      virtual map<string,inode_ptr> get_dirents() const override;
+
 
 
 };

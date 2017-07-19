@@ -108,65 +108,14 @@ const wordvec& plain_file::readfile() const {
 }
 
 
-wordvec inode_state::pathname_to_wordvec (const string& pathname) {
-   wordvec path;
-   string delimiter = "/";
-   size_t begin = 0, end = 0;
 
-   if (pathname.at(0) == '/') {
-      ++begin;
-   }
-   for (;;) {
-      if (begin == pathname.size()) break;
-      end = pathname.find_first_of(delimiter, begin);
-      if (end == string::npos) {
-         end = pathname.size();
-         path.push_back (pathname.substr (begin, end - begin));
-         DEBUGF ('i', "path " << path);
-         break;
-      }
-      path.push_back (pathname.substr (begin, end - begin));
-      DEBUGF ('i', "path " << end);
-      begin = end + 1;
-   }
-
-   return path;
-}
 
 void plain_file::writefile (const wordvec& words) {
    DEBUGF ('i', words);
 }
 
-inode_ptr inode_state::find_inode_ptr (const string& name,
-                                            inode_ptr& curr) {
-   map<string,inode_ptr> dirents = getContent (curr) -> get_dirents();
-   inode_ptr ptr = nullptr;
 
-   if (dirents.find (name) != dirents.end()) {
-      ptr = dirents.find (name) -> second;
-   }
 
-   return ptr;
-}
-
-inode_ptr inode_state::pathname_to_inode_ptr (const string& pathname) {
-   return wordvec_to_inode_ptr (pathname_to_wordvec (pathname));
-}
-
-inode_ptr inode_state::wordvec_to_inode_ptr (const wordvec& pathname) {
-   inode_ptr ptr = cwd;
-
-   if (pathname.empty()) {
-      return root;
-   }
-
-   for (string path: pathname) {
-      ptr = find_inode_ptr (path, ptr);
-      if (ptr == nullptr) break;
-   }
-
-   return ptr;
-}
 
 void plain_file::remove (const string&) {
    throw file_error ("is a plain file");
