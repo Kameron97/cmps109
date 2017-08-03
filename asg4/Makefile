@@ -1,10 +1,8 @@
-# $Id: Makefile,v 1.7 2017-07-24 15:57:08-07 - - $
 
 MKFILE      = Makefile
 DEPFILE     = ${MKFILE}.dep
 NOINCL      = ci clean spotless
 NEEDINCL    = ${filter ${NOINCL}, ${MAKECMDGOALS}}
-GMAKE       = ${MAKE} --no-print-directory
 WARNINGS    = -Wall -Wextra -Wold-style-cast
 GPP         = g++ -std=gnu++14 -g -O0 -rdynamic ${WARNINGS}
 
@@ -26,7 +24,6 @@ CLASS       = cmps109-wm.w15
 PROJECT     = asg3
 
 all : ${EXECBIN}
-	- checksource ${ALLSOURCES}
 
 echo :
 	- echo ${ALLSOURCES}
@@ -36,14 +33,10 @@ ${EXECBIN} : ${OBJECTS}
 
 %.o : %.cpp
 	${GPP} -c $<
-	- cpplint.py.perl $<
 
 colors.cppgen: mk-colors.perl
 	mk-colors.perl >colors.cppgen
 
-ci : ${ALLSOURCES}
-	cid + ${ALLSOURCES}
-	- checksource ${ALLSOURCES}
 
 lis : ${ALLSOURCES}
 	mkpspdf ${LISTING} ${ALLSOURCES} ${DEPFILE}

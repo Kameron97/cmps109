@@ -59,6 +59,8 @@ class window {
       static void special (int key, int, int);
       static void motion (int x, int y);
       static void passivemotion (int x, int y);
+      static void move_selected_object(int x, int y);
+      static void select_object(int index);
       static void mousefn (int button, int state, int x, int y);
    public:
       static void push_back (const object& obj) {
@@ -66,6 +68,8 @@ class window {
       static void setwidth (int width_) { width = width_; }
       static void setheight (int height_) { height = height_; }
       static void main();
+      static float thickness;
+      static string border_color;
 };
 
 #endif
