@@ -13,7 +13,6 @@ int window::height = 480; // in pixels
 vector<object> window::objects;
 size_t window::selected_obj = 0;
 mouse window::mus;
-size_t widnow::selected_obj = 0;
 float window::thickness = 4;
 string window::border_color = "red";
 
@@ -79,13 +78,14 @@ void window::keyboard (GLubyte key, int x, int y) {
       case 'L': case 'l':
          move_selected_object (+1, 0);
          break;
-      case 'N': case 'n': case SPACE: case TAB:
-       select_copy = window::selected_obj;
-         select_object (++select_copy);
+     case 'N': case 'n': case SPACE: case TAB:  
+         if(selected_obj == objects.size()-1) window::selected_obj = -1;
+         select_object (selected_obj+1);
          break;
       case 'P': case 'p': case BS:
-       select_copy = window::selected_obj;
-         select_object (++select_copy);
+         if(selected_obj == 0) 
+                    window::selected_obj = objects.size();
+         select_object (selected_obj-1);
          break;
       case '0'...'9':
          select_object (key - '0');
