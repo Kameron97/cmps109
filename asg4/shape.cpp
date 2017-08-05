@@ -56,7 +56,7 @@ polygon::polygon (const vertex_list& vertices): vertices(vertices) {
 }
 
 rectangle::rectangle (GLfloat width, GLfloat height):
-            polygon({}) {
+       polygon({{0, 0}, {width, 0}, {width, height}, {0, height}}) {
    DEBUGF ('c', this << "(" << width << "," << height << ")");
 }
 
@@ -64,17 +64,56 @@ square::square (GLfloat width): rectangle (width, width) {
    DEBUGF ('c', this);
 }
 
+triangle::triangle (const vertex_list& vertices): polygon(vertices) {
+
+  DEBUGF ('c', this);
+}
+
+equilateral::equilateral(GLfloat width): 
+                      triangle({{-width/2, 0},
+                                {0 ,width/2*sqrtf(3)},
+                                {width/2,0}}){
+ 
+  DEBUGF ('c', this);
+
+ }
+ 
 void text::draw (const vertex& center, const rgbcolor& color) const {
    DEBUGF ('d', this << "(" << center << "," << color << ")");
+   auto text = reinterpret_cast<const GLubyte*> (textdata.c_str());
+   glColor3ubv (color.ubvec);
+   glRasterPos2f (center.xpos, center.ypos);
+   glutBitmapString (glut_bitmap_font, text);
+   glutSwapBuffers();
 }
 
 void ellipse::draw (const vertex& center, const rgbcolor& color) const {
-   DEBUGF ('d', this << "(" << center << "," << color << ")");
+    DEBUGF ('d', this << "(" << center << "," << color << ")");
+   glBegin (GL_POLYGON);
+   glEnable (GL_LINE_SMOOTH);
+   glColor3ubv (color.ubvec);
+   const float delta = 2 * M_PI / 32;
+   float width = dimension.xpos;
+   float height = dimension.ypos;
+   for (float theta = 0; theta < 2 * M_PI; theta += delta) {
+      float x = width * cos (theta) + center.xpos;
+      float y = height * sin (theta) + center.ypos;
+      glVertex2f (x, y);
+   }
+   glEnd();
+   cout << "end\n";
 }
 
 void polygon::draw (const vertex& center, const rgbcolor& color) const {
-   DEBUGF ('d', this << "(" << center << "," << color << ")");
-}
+DEBUGF ('d', this << "(" << center << "," << color << ")");
+   
+   vertex_list vl = update_center(vertices, center);
+   
+   glBegin (GL_POLYGON);
+   glColor3ubv (color.ubvec);
+   for (size_t i = 0; i < vl.size(); ++i)
+      glVertex2f(vl.at(i).xpos, vl.at(i).ypos);
+   glEnd();}
 
 void shape::show (ostream& out) const {
    out << this << "->" << demangle (*this) << ": ";
