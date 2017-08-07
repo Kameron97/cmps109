@@ -29,9 +29,7 @@ interpreter::factory_map {
    {"rectangle"      , &interpreter::make_rectangle      },
    {"square"         , &interpreter::make_square         },
    {"triangle"       , &interpreter::make_triangle       },
-   {"right_triangle" , &interpreter::make_right_triangle },
    {"equilateral"    , &interpreter::make_equilateral    },
-   {"isosceles"      , &interpreter::make_isosceles      },
    {"diamond"        , &interpreter::make_diamond        }
 };
 

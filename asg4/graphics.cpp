@@ -14,17 +14,13 @@ int window::width = 640; // in pixels
 int window::height = 480; // in pixels
 vector<object> window::objects;
 size_t window::selected_obj = 0;
-mouse window::mus;
 bool window::draw_border = false;
 float window::thickness = 4;
 float window::delta = 1;
 string window::border_color = "red";
+mouse window::mus;
 
-object::object(const shared_ptr<shape>& s, vertex& pos, rgbcolor& col){
-   pshape = s;
-   center = pos;
-   color = col;
-}
+
 
 
 
@@ -49,15 +45,7 @@ void window::entry (int mouse_entered) {
 // Called to display the objects in the window.
 void window::display() {
    glClear (GL_COLOR_BUFFER_BIT);
-   size_t index = 0;
-   for (auto& object: window::objects){
-      if (index == window::selected_obj) {
-         window::draw_border = true;
-      }
-      object.draw(); 
-      window::draw_border = false;  
-      index++;
-   } 
+   for (auto& object: window::objects) object.draw();
    mus.draw();
    glutSwapBuffers();
 }
@@ -206,6 +194,12 @@ void mouse::state (int button, int state) {
       case GLUT_MIDDLE_BUTTON: middle_state = state; break;
       case GLUT_RIGHT_BUTTON: right_state = state; break;
    }
+}
+
+object::object(const shared_ptr<shape>& s, vertex& pos, rgbcolor& col){
+   pshape = s;
+   center = pos;
+   color = col;
 }
 
 void mouse::draw() {
