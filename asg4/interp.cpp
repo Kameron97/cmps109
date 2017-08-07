@@ -3,6 +3,8 @@
 #include <memory>
 #include <string>
 #include <vector>
+#include <cmath>
+
 using namespace std;
 
 #include <GL/freeglut.h>
@@ -45,6 +47,8 @@ static unordered_map<string,void*> fontcode {
 
 interpreter::shape_map interpreter::objmap;
 
+//default code
+
 interpreter::~interpreter() {
    for (const auto& itor: objmap) {
       cout << "objmap[" << itor.first << "] = "
@@ -72,12 +76,7 @@ void interpreter::do_define (param begin, param end) {
 void interpreter::do_draw (param begin, param end) {
    DEBUGF ('f', range (begin, end));
    cout << end - begin << endl;
-   //cout << "0 :" << begin[0] << endl;
-   //cout << "1 :" << begin[1] << endl;
-   //cout << "2 :" << begin[2] << endl;
-   //cout << "3 :" << begin[3] << endl;
-   //cout << "4 :" << begin[4] << endl;
-
+   
    if (end - begin != 4) throw runtime_error ("syntax error");
    string name = begin[1];
    shape_map::const_iterator itor = objmap.find (name);
@@ -88,7 +87,6 @@ void interpreter::do_draw (param begin, param end) {
                  from_string<GLfloat> (begin[3])};
    rgbcolor color {begin[0]};
    window::push_back(object(itor->second, where, color));
-   //itor->second->draw (where, color);
 }
 
 void interpreter::do_border(param begin, param end) {
@@ -99,6 +97,8 @@ void interpreter::do_border(param begin, param end) {
    window::border_color = color;
    window::thickness = t;
 }
+
+
 void interpreter::do_moveby (param begin, param end) {
    DEBUGF ('f', range (begin, end));
    window::delta = stof(*begin);
@@ -117,22 +117,17 @@ shape_ptr interpreter::make_shape (param begin, param end) {
 
 shape_ptr interpreter::make_text (param begin, param end) {
    DEBUGF ('f', range (begin, end));
-   auto itor = fontcode.find(*begin);
-   if (itor == fontcode.end()) {
-      throw runtime_error("Font does not exist");
+   //Calls text ctor and makes shared_ptr to text object created.
+   string words;
+   auto font = shape::fontcode.find(*begin);
+   if (font == shape::fontcode.end()){
+      throw runtime_error (*begin + ": no such font");
    }
-   void *font = itor->second;
-   begin++;
-   string message;
-   while (begin != end) {
-      message += " ";
-      message += *begin;
-      begin++;
+   ++begin;
+   while (begin != end){
+      words += *begin++ + " ";
    }
-   // = "testing text";
-   //cout << "begin: " << *begin << endl;
-   cout << "end of make_text" << endl;
-   return make_shared<text> (font, message);
+   return make_shared<text> (font->second, words);
 }
 
 shape_ptr interpreter::make_ellipse (param begin, param end) {
