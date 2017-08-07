@@ -67,11 +67,8 @@ square::square (GLfloat width): rectangle (width, width) {
 }
 
 diamond::diamond (GLfloat width, GLfloat height): 
-        polygon({{0-width/2, 0},
-                 {0, 0+height/2},
-                 {0+width/2, 0}, 
-                 {0, 0-height/2}
-               }){
+        polygon({{0-width/2, 0}, {0, 0+height/2},
+                 {0+width/2, 0}, {0, 0-height/2} }){
    DEBUGF ('c', this);
 }
 
@@ -86,9 +83,8 @@ triangle::triangle (const vertex_list& vertices): polygon(vertices) {
  // TIM, PLEASE
  // VERIFY EQUILATERAL
 equilateral::equilateral(GLfloat width): 
-                      triangle({{-width/2, 0},
-                                {0 ,width/2*sqrtf(3)},
-                                {width/2,0}}){
+    triangle({{-width/2, 0}, {0 ,width/2*sqrtf(3)},
+            {width/2,0}}){
  
   DEBUGF ('c', this);
 
@@ -96,16 +92,12 @@ equilateral::equilateral(GLfloat width):
 
 
 void text::draw (const vertex& center, const rgbcolor& color) const {
-  DEBUGF ('d', this << "(" << center << "," << color << ")");
-  if (window::draw_border) 
-    glColor3ubv(rgbcolor(window::border_color).ubvec);  
-  else 
-    glColor3ubv(color.ubvec);
-
-  glRasterPos2f(center.xpos, center.ypos);
-  glutBitmapString(glut_bitmap_font, 
-        reinterpret_cast<const unsigned char*>(textdata.c_str())); 
-
+ DEBUGF ('d', this << "(" << center << "," << color << ")");
+   auto text = reinterpret_cast<const GLubyte*> (textdata.c_str());
+   glColor3ubv (color.ubvec);
+   glRasterPos2f (center.xpos, center.ypos);
+   glutBitmapString (glut_bitmap_font, text);
+   glutSwapBuffers();
 }
 
 void ellipse::draw (const vertex& center, const rgbcolor& color) const {
