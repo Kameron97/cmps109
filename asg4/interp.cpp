@@ -126,7 +126,6 @@ shape_ptr interpreter::make_text (param begin, param end) {
    void * font = itor->second;
    while (begin != end)
    str += (*begin++) + " ";
-   //cout << str << endl;
    return make_shared<text> (font, str);
 }
 
