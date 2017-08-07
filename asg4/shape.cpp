@@ -105,13 +105,16 @@ void ellipse::draw (const vertex& center, const rgbcolor& color) const {
    glBegin (GL_POLYGON);
    glEnable (GL_LINE_SMOOTH);
    glColor3ubv (color.ubvec);
+
    const float delta = 2 * M_PI / 32;
    float width = dimension.xpos;
    float height = dimension.ypos;
-   for (float theta = 0; theta < 2 * M_PI; theta += delta) {
+   float theta = 0
+   while ( theta < 2 * M_PI) {
       float x = width * cos (theta) + center.xpos;
       float y = height * sin (theta) + center.ypos;
       glVertex2f (x, y);
+      theta += delta
    }
    glEnd();
    cout << "end\n";
