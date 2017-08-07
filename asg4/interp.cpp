@@ -117,18 +117,19 @@ shape_ptr interpreter::make_shape (param begin, param end) {
 
 shape_ptr interpreter::make_text (param begin, param end) {
    DEBUGF ('f', range (begin, end));
-   //Calls text ctor and makes shared_ptr to text object created.
-   string words;
-   auto font = shape::fontcode.find(*begin);
-   if (font == shape::fontcode.end()){
-      throw runtime_error (*begin + ": no such font");
+   string type = *begin++;
+   string str;
+   auto itor = fontcode.find(type);
+   if (itor == fontcode.end()) {
+      throw runtime_error (type + ": no such font");
    }
-   ++begin;
-   while (begin != end){
-      words += *begin++ + " ";
-   }
-   return make_shared<text> (font->second, words);
+   void * font = itor->second;
+   while (begin != end)
+   str += (*begin++) + " ";
+   //cout << str << endl;
+   return make_shared<text> (font, str);
 }
+
 
 shape_ptr interpreter::make_ellipse (param begin, param end) {
    DEBUGF ('f', range (begin, end));
