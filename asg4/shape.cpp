@@ -118,147 +118,31 @@ void ellipse::draw (const vertex& center, const rgbcolor& color) const {
    cout << "end\n";
 }
 
-void polygon::draw (const vertex& center, const rgbcolor& color,\
-                    const bool& selected, const GLfloat& thick,\
-                    const string& bcolor, const size_t& obj_num)const{
+void polygon::draw (const vertex& center, const rgbcolor& color) const {
    DEBUGF ('d', this << "(" << center << "," << color << ")");
 
-   //Handle which type is drawn here!
-   if (vertices.size() == 2){
-      glBegin(GL_POLYGON);
-      glColor3ubv (color.ubvec);
-      GLfloat width = vertices.at(0).xpos;
-      GLfloat height = vertices.at(0).ypos;
-      glVertex2f (center.xpos, center.ypos);
-      glVertex2f (center.xpos + (width/2), center.ypos + (height/2));
-      glVertex2f (center.xpos + width, center.ypos);
-      glVertex2f (center.xpos + (width/2), center.ypos - (height/2));
-      glEnd();
-      vertex box = {center.xpos+(width/2), center.ypos};
-      number_draw(box, color, obj_num);
-      if (selected){
-         rgbcolor border {bcolor};
-         glLineWidth (thick);
-         glBegin (GL_LINE_LOOP);
-         glColor3ubv (border.ubvec);
-         glVertex2f (center.xpos, center.ypos);
-         glVertex2f (center.xpos + (width/2), center.ypos + (height/2));
-         glVertex2f (center.xpos + width, center.ypos);
-         glVertex2f (center.xpos + (width/2), center.ypos - (height/2));
-         glEnd();
-      }
-      return;
-   }
-
-   //If box, draw rect/square
-   if (vertices.size() == 1){
-      //Code taken from square.cpp
-      glBegin (GL_POLYGON);
-      glColor3ubv (color.ubvec);
-      GLfloat width = vertices.at(0).xpos;
-      GLfloat height = vertices.at(0).ypos;
-      glVertex2f (center.xpos, center.ypos);
-      glVertex2f (center.xpos + width, center.ypos);
-      glVertex2f (center.xpos + width, center.ypos + height);
-      glVertex2f (center.xpos, center.ypos + height);
-      glEnd();
-      vertex box = {center.xpos+(width/2), center.ypos+(height/2)};
-      number_draw(box, color, obj_num);
-      if (selected){
-         rgbcolor border {bcolor};
-         glLineWidth (thick);
-         glBegin (GL_LINE_LOOP);
-         glColor3ubv (border.ubvec);
-         glVertex2f (center.xpos, center.ypos);
-         glVertex2f (center.xpos + width, center.ypos);
-         glVertex2f (center.xpos + width, center.ypos + height);
-         glVertex2f (center.xpos, center.ypos + height);
-         glEnd();
-      }
-      return;  
-   }
-
-   //If triangle, draw triangle.
-   if (vertices.size() == 3){
-      vertex average {0,0};
-      //Finding original origin
-      for (int i = 0; i < 3; i++){
-         average.xpos += vertices.at(i).xpos;
-         average.ypos += vertices.at(i).ypos;  
-      }
-      average.xpos = average.xpos/3;
-      average.ypos = average.ypos/3; 
-      //Adjusting origin
-      average.xpos = (center.xpos - average.xpos);
-      average.ypos = (center.ypos - average.ypos);
-      glBegin(GL_TRIANGLES);
-      glColor3ubv (color.ubvec);
-      glVertex2f(vertices.at(0).xpos + average.xpos, 
-                 vertices.at(0).ypos + average.ypos);
-      glVertex2f(vertices.at(1).xpos + average.xpos, 
-                 fabs(vertices.at(1).ypos + average.ypos));
-      glVertex2f(fabs(vertices.at(2).xpos + average.xpos), 
-                 vertices.at(2).ypos + average.ypos);
-      glEnd();
-      //Draw number
-      number_draw(center, color, obj_num);
-      //Draw border if selected
-      if (selected){
-      rgbcolor border {bcolor};
-      glLineWidth (thick);
+   if (window::draw_border) {
+      glLineWidth(window::thickness);
       glBegin(GL_LINE_LOOP);
-      glColor3ubv (border.ubvec);
-      glVertex2f(vertices.at(0).xpos + average.xpos, 
-                 vertices.at(0).ypos + average.ypos);
-      glVertex2f(vertices.at(1).xpos + average.xpos, 
-                 fabs(vertices.at(1).ypos + average.ypos));
-      glVertex2f(fabs(vertices.at(2).xpos + average.xpos), 
-                 vertices.at(2).ypos + average.ypos);
-      glEnd();
+      glColor3ubv(rgbcolor(window::border_color).ubvec);  
+      
+      for (vertex v : vertices) {
+        float x = center.xpos + v.xpos;
+        float y = center.ypos + v.ypos;
+        glVertex2f(x,y);
       }
-      return;
+      glEnd();
    }
 
-   //If none of the above, draw polygon
-   glBegin(GL_POLYGON);
+   glBegin (GL_POLYGON);
    glColor3ubv (color.ubvec);
-   vertex average {0,0};
-   int size = vertices.size();
-   for (int i = 0; i < size; i++){
-         average.xpos += vertices.at(i).xpos;
-         average.ypos += vertices.at(i).ypos;  
-      }
-      average.xpos = average.xpos/size;
-      average.ypos = average.ypos/size;
-      average.xpos = (center.xpos - average.xpos);
-      average.ypos = (center.ypos - average.ypos); 
-   for (auto& point: vertices){
-      glVertex2f(point.xpos+average.xpos, 
-                 point.ypos+average.ypos);
+   for (vertex v : vertices) {
+      float x = center.xpos + v.xpos;
+      float y = center.ypos + v.ypos;
+      glVertex2f(x,y);
    }
+  
    glEnd();
-   number_draw(center, color, obj_num);
-   if (selected){
-      rgbcolor border {bcolor};
-      glLineWidth (thick);
-      glBegin(GL_LINE_LOOP);
-      glColor3ubv (border.ubvec);
-      vertex average {0,0};
-      int size = vertices.size();
-      for (int i = 0; i < size; i++){
-         average.xpos += vertices.at(i).xpos;
-         average.ypos += vertices.at(i).ypos;  
-      }
-      average.xpos = average.xpos/size;
-      average.ypos = average.ypos/size;
-      average.xpos = (center.xpos - average.xpos);
-      average.ypos = (center.ypos - average.ypos); 
-      for (auto& point: vertices){
-         glVertex2f(point.xpos+average.xpos, 
-                    point.ypos+average.ypos);
-      }
-   glEnd();
-   }
 }
 
 void shape::show (ostream& out) const {
