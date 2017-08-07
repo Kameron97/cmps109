@@ -1,5 +1,7 @@
 // $Id: graphics.h,v 1.1 2015-07-16 16:47:51-07 - - $
 
+
+
 #ifndef __GRAPHICS_H__
 #define __GRAPHICS_H__
 
@@ -19,6 +21,8 @@ class object {
       rgbcolor color;
    public:
       // Default copiers, movers, dtor all OK.
+      //constructor for object
+      object(const shared_ptr<shape>&, vertex&, rgbcolor&);
       void draw() { pshape->draw (center, color); }
       void move (GLfloat delta_x, GLfloat delta_y) {
          center.xpos += delta_x;
@@ -41,7 +45,7 @@ class mouse {
       void draw();
 };
 
-
+
 class window {
       friend class mouse;
    private:
@@ -59,17 +63,19 @@ class window {
       static void special (int key, int, int);
       static void motion (int x, int y);
       static void passivemotion (int x, int y);
-      static void move_selected_object(int x, int y);
-      static void select_object(int index);
       static void mousefn (int button, int state, int x, int y);
    public:
+      static float delta;
+      static float thickness;
+      static bool draw_border;
+      static string border_color;
+      static void move_selected_object(int x, int y);
+      static void select_object(int index);
       static void push_back (const object& obj) {
                   objects.push_back (obj); }
       static void setwidth (int width_) { width = width_; }
       static void setheight (int height_) { height = height_; }
       static void main();
-      static float thickness;
-      static string border_color;
 };
 
 #endif

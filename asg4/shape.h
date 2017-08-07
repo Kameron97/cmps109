@@ -8,6 +8,7 @@
 #include <memory>
 #include <utility>
 #include <vector>
+#include <cmath>
 using namespace std;
 
 #include "rgbcolor.h"
@@ -42,13 +43,14 @@ using shape_ptr = shared_ptr<shape>;
 
 class shape {
    friend ostream& operator<< (ostream& out, const shape&);
-   protected:
-      inline shape(); // Only subclass may instantiate.
-   public:
+   private:
       shape (const shape&) = delete; // Prevent copying.
       shape& operator= (const shape&) = delete; // Prevent copying.
       shape (shape&&) = delete; // Prevent moving.
       shape& operator= (shape&&) = delete; // Prevent moving.
+   protected:
+      inline shape(); // Only subclass may instantiate.
+   public:
       virtual ~shape() {}
       virtual void draw (const vertex&, const rgbcolor&) const = 0;
       virtual void show (ostream&) const;
@@ -107,7 +109,6 @@ class polygon: public shape {
       virtual void show (ostream&) const override;
 };
 
-
 //
 // Classes rectangle, square, etc.
 //
@@ -132,11 +133,12 @@ class triangle: public polygon {
       triangle (const vertex_list& vertices);
 };
 
+
+
 class equilateral: public triangle {
    public:
       equilateral (GLfloat width);
 };
-
 
 ostream& operator<< (ostream& out, const shape&);
 

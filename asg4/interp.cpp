@@ -22,16 +22,17 @@ interpreter::interp_map {
 
 unordered_map<string,interpreter::factoryfn>
 interpreter::factory_map {
-   {"text"     , &interpreter::make_text     },
-   {"ellipse"  , &interpreter::make_ellipse  },
-   {"circle"   , &interpreter::make_circle   },
-   {"polygon"  , &interpreter::make_polygon  },
-   {"rectangle", &interpreter::make_rectangle},
-   {"square"   , &interpreter::make_square   },
-   {"triangle"       , &interpreter::make_triangle },
-   {"equilateral"    , &interpreter::make_equilateral},
-   {"diamond"        , &interpreter::make_diamond}
-
+   {"text"           , &interpreter::make_text           },
+   {"ellipse"        , &interpreter::make_ellipse        },
+   {"circle"         , &interpreter::make_circle         },
+   {"polygon"        , &interpreter::make_polygon        },
+   {"rectangle"      , &interpreter::make_rectangle      },
+   {"square"         , &interpreter::make_square         },
+   {"triangle"       , &interpreter::make_triangle       },
+   {"right_triangle" , &interpreter::make_right_triangle },
+   {"equilateral"    , &interpreter::make_equilateral    },
+   {"isosceles"      , &interpreter::make_isosceles      },
+   {"diamond"        , &interpreter::make_diamond        }
 };
 
 static unordered_map<string,void*> fontcode {
@@ -43,7 +44,6 @@ static unordered_map<string,void*> fontcode {
    {"Times-Roman-10", GLUT_BITMAP_TIMES_ROMAN_10},
    {"Times-Roman-24", GLUT_BITMAP_TIMES_ROMAN_24},
 };
-
 
 interpreter::shape_map interpreter::objmap;
 
@@ -70,26 +70,40 @@ void interpreter::do_define (param begin, param end) {
    objmap.emplace (name, make_shape (++begin, end));
 }
 
-
+
 void interpreter::do_draw (param begin, param end) {
    DEBUGF ('f', range (begin, end));
+   cout << end - begin << endl;
+   //cout << "0 :" << begin[0] << endl;
+   //cout << "1 :" << begin[1] << endl;
+   //cout << "2 :" << begin[2] << endl;
+   //cout << "3 :" << begin[3] << endl;
+   //cout << "4 :" << begin[4] << endl;
+
    if (end - begin != 4) throw runtime_error ("syntax error");
    string name = begin[1];
    shape_map::const_iterator itor = objmap.find (name);
    if (itor == objmap.end()) {
       throw runtime_error (name + ": no such shape");
    }
-   rgbcolor color {begin[0]};
    vertex where {from_string<GLfloat> (begin[2]),
                  from_string<GLfloat> (begin[3])};
-   itor->second->draw (where, color);
+   rgbcolor color {begin[0]};
+   window::push_back(object(itor->second, where, color));
+   //itor->second->draw (where, color);
 }
 
-void interpreter::make_border( param begin, param end){
-   arg_check(begin, end, 2);
-   object::bcolor = *begin++;
-   object::think = from_string<GLfloat>(*begin);
-   return;
+void interpreter::do_border(param begin, param end) {
+   DEBUGF ('f', range (begin, end));
+   string color = *begin;
+   *begin++;
+   int t =  from_string<int> (*begin);
+   window::border_color = color;
+   window::thickness = t;
+}
+void interpreter::do_moveby (param begin, param end) {
+   DEBUGF ('f', range (begin, end));
+   window::delta = stof(*begin);
 }
 
 shape_ptr interpreter::make_shape (param begin, param end) {
@@ -123,19 +137,16 @@ shape_ptr interpreter::make_text (param begin, param end) {
    return make_shared<text> (font, message);
 }
 
-void interpreter::do_moveby (param begin, param end) {
-   DEBUGF ('f', range (begin, end));
-   window::delta = stof(*begin);
-}
-
 shape_ptr interpreter::make_ellipse (param begin, param end) {
    DEBUGF ('f', range (begin, end));
-   return make_shared<ellipse> (GLfloat(), GLfloat());
+
+   return make_shared<ellipse> (GLfloat(stof(begin[0])), 
+                                GLfloat(stof(begin[1])));
 }
 
 shape_ptr interpreter::make_circle (param begin, param end) {
    DEBUGF ('f', range (begin, end));
-   return make_shared<circle> (GLfloat());
+   return make_shared<circle> (GLfloat(stof(begin[0])));
 }
 
 shape_ptr interpreter::make_polygon (param begin, param end) {
@@ -184,4 +195,6 @@ shape_ptr interpreter::make_equilateral (param begin, param end) {
    DEBUGF ('f', range (begin, end));
    return make_shared<equilateral> (GLfloat(stof(begin[0])));
 }
+
+
 

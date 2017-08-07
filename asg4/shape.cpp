@@ -6,6 +6,7 @@ using namespace std;
 
 #include "shape.h"
 #include "util.h"
+#include "graphics.h"
 
 static unordered_map<void*,string> fontname {
    {GLUT_BITMAP_8_BY_13       , "Fixed-8x13"    },
@@ -50,8 +51,9 @@ circle::circle (GLfloat diameter): ellipse (diameter, diameter) {
    DEBUGF ('c', this);
 }
 
-
+
 polygon::polygon (const vertex_list& vertices): vertices(vertices) {
+   
    DEBUGF ('c', this);
 }
 
@@ -64,11 +66,25 @@ square::square (GLfloat width): rectangle (width, width) {
    DEBUGF ('c', this);
 }
 
+diamond::diamond (GLfloat width, GLfloat height): 
+        polygon({{0-width/2, 0},
+                 {0, 0+height/2},
+                 {0+width/2, 0}, 
+                 {0, 0-height/2}
+               }){
+   DEBUGF ('c', this);
+}
+
 triangle::triangle (const vertex_list& vertices): polygon(vertices) {
 
   DEBUGF ('c', this);
 }
 
+
+
+
+ // TIM, PLEASE
+ // VERIFY EQUILATERAL
 equilateral::equilateral(GLfloat width): 
                       triangle({{-width/2, 0},
                                 {0 ,width/2*sqrtf(3)},
@@ -77,64 +93,81 @@ equilateral::equilateral(GLfloat width):
   DEBUGF ('c', this);
 
  }
- 
+
+
 void text::draw (const vertex& center, const rgbcolor& color) const {
-   DEBUGF ('d', this << "(" << center << "," << color << ")");
-   auto text = reinterpret_cast<const GLubyte*> (textdata.c_str());
-   glColor3ubv (color.ubvec);
-   glRasterPos2f (center.xpos, center.ypos);
-   glutBitmapString (glut_bitmap_font, text);
-   glutSwapBuffers();
+  DEBUGF ('d', this << "(" << center << "," << color << ")");
+  if (window::draw_border) 
+    glColor3ubv(rgbcolor(window::border_color).ubvec);  
+  else 
+    glColor3ubv(color.ubvec);
+
+  glRasterPos2f(center.xpos, center.ypos);
+  glutBitmapString(glut_bitmap_font, 
+        reinterpret_cast<const unsigned char*>(textdata.c_str())); 
+
 }
 
 void ellipse::draw (const vertex& center, const rgbcolor& color) const {
-    DEBUGF ('d', this << "(" << center << "," << color << ")");
-   glBegin (GL_POLYGON);
-   glEnable (GL_LINE_SMOOTH);
-   glColor3ubv (color.ubvec);
-   const float delta = 2 * M_PI / 32;
-   float width = dimension.xpos;
-   float height = dimension.ypos;
-   for (float theta = 0; theta < 2 * M_PI; theta += delta) {
-      float x = width * cos (theta) + center.xpos;
-      float y = height * sin (theta) + center.ypos;
-      glVertex2f (x, y);
-   }
-   glEnd();
-   cout << "end\n";
+  DEBUGF ('d', this << "(" << center << "," << color << ")");
+    
+    const float i = 2 * M_PI / 32;
+
+    if (window::draw_border) {
+      glLineWidth(window::thickness);
+      glBegin(GL_LINE_LOOP);
+      glColor3ubv(rgbcolor(window::border_color).ubvec);  
+    
+      for (float angle = 0; angle < 2 * M_PI; angle += i) {
+        float x = dimension.xpos/2 * cos(angle) + center.xpos;
+        float y = dimension.ypos/2 * sin(angle) + center.ypos;
+        glVertex2f(x, y);
+      }
+      glEnd();
+    }  
+
+    glBegin(GL_POLYGON);
+    glColor3ubv(color.ubvec);   
+
+    for (float angle = 0; angle < 2 * M_PI; angle += i) {
+      float x = dimension.xpos/2 * cos(angle) + center.xpos;
+      float y = dimension.ypos/2 * sin(angle) + center.ypos;
+      glVertex2f(x, y);
+    }
+    glEnd();
+    
+
 }
 
 void polygon::draw (const vertex& center, const rgbcolor& color) const {
-DEBUGF ('d', this << "(" << center << "," << color << ")");
-   
-   vertex_list vl = update_center(vertices, center);
-   
+   DEBUGF ('d', this << "(" << center << "," << color << ")");
+
+   if (window::draw_border) {
+      glLineWidth(window::thickness);
+      glBegin(GL_LINE_LOOP);
+      glColor3ubv(rgbcolor(window::border_color).ubvec);  
+      
+      for (vertex v : vertices) {
+        float x = center.xpos + v.xpos;
+        float y = center.ypos + v.ypos;
+        glVertex2f(x,y);
+      }
+      glEnd();
+   }
+
    glBegin (GL_POLYGON);
    glColor3ubv (color.ubvec);
-   for (size_t i = 0; i < vl.size(); ++i)
-      glVertex2f(vl.at(i).xpos, vl.at(i).ypos);
-   glEnd();}
+   for (vertex v : vertices) {
+      float x = center.xpos + v.xpos;
+      float y = center.ypos + v.ypos;
+      glVertex2f(x,y);
+   }
+  
+   glEnd();
+}
 
 void shape::show (ostream& out) const {
    out << this << "->" << demangle (*this) << ": ";
-}
-
-vertex_list update_center(const vertex_list & vl, 
-                          const vertex & cen) {
-   vertex_list res;
-   vertex av = get_aver_vertices(vl);
-   vertex diff;
-   diff.xpos = cen.xpos - av.xpos;
-   diff.ypos = cen.ypos - av.ypos;
-   //cout << "diff.xpos: " << diff.xpos 
-   //<< " diff.ypos: " << diff.ypos << endl;
-   for (size_t i = 0; i < vl.size(); ++i) {
-      vertex v;
-      v.xpos = vl.at(i).xpos + diff.xpos;
-      v.ypos = vl.at(i).ypos + diff.ypos;
-      res.push_back(v);
-   }
-   return res;
 }
 
 void text::show (ostream& out) const {
