@@ -1,11 +1,3 @@
-# Tim Mertogul
-# tmertogu@ucsc.edu
-# Michael Lowe
-# mimlowe@ucsc.edu
-# CMPS109
-# Spring 2015
-# ASG 4
-
 MKFILE      = Makefile
 DEPFILE     = ${MKFILE}.dep
 NOINCL      = ci clean spotless

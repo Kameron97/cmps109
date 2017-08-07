@@ -1,0 +1,39 @@
+head	1.2;
+access;
+symbols;
+locks;
+comment	@# @;
+
+
+1.2
+date	2017.08.07.04.28.29;	author -;	state -;
+branches;
+next	1.1;
+
+1.1
+date	2017.08.07.04.28.05;	author -;	state -;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.2
+log
+@-
+@
+text
+@									kek
+		test
+@
+
+
+1.1
+log
+@-
+@
+text
+@d1 2
+@

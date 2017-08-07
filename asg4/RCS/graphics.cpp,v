@@ -1,9 +1,14 @@
-head	1.3;
+head	1.4;
 access;
 symbols;
 locks;
 comment	@// @;
 
+
+1.4
+date	2017.08.07.04.28.05;	author -;	state -;
+branches;
+next	1.3;
 
 1.3
 date	2016.07.21.04.33.16;	author -;	state -;
@@ -25,12 +30,12 @@ desc
 @@
 
 
-1.3
+1.4
 log
 @-
 @
 text
-@// $Id: graphics.cpp,v 1.2 2016-07-20 21:32:12-07 - - $
+@// $Id: graphics.cpp,v 1.3 2016-07-20 21:33:16-07 - - $
 
 #include <iostream>
 using namespace std;
@@ -40,11 +45,21 @@ using namespace std;
 #include "graphics.h"
 #include "util.h"
 
+
+// Window Defaults go here
 int window::width = 640; // in pixels
 int window::height = 480; // in pixels
 vector<object> window::objects;
 size_t window::selected_obj = 0;
+bool window::draw_border = false;
+float window::thickness = 4;
+float window::delta = 1;
+string window::border_color = "red";
 mouse window::mus;
+
+
+
+
 
 // Executed when window system signals to shut down.
 void window::close() {
@@ -67,7 +82,9 @@ void window::entry (int mouse_entered) {
 // Called to display the objects in the window.
 void window::display() {
    glClear (GL_COLOR_BUFFER_BIT);
-   for (auto& object: window::objects) object.draw();
+   for (auto& object: window::objects) {
+      object.draw();
+   }
    mus.draw();
    glutSwapBuffers();
 }
@@ -86,72 +103,111 @@ void window::reshape (int width, int height) {
    glutPostRedisplay();
 }
 
-
 // Executed when a regular keyboard key is pressed.
+enum {BS=8, TAB=9, ESC=27, SPACE=32, DEL=127};
 void window::keyboard (GLubyte key, int x, int y) {
-   enum {BS = 8, TAB = 9, ESC = 27, SPACE = 32, DEL = 127};
-   DEBUGF ('g', "key=" << unsigned (key) << ", x=" << x << ", y=" << y);
+   DEBUGF ('g', "key=" << (unsigned)key << ", x=" << x << ", y=" << y);
    window::mus.set (x, y);
    switch (key) {
       case 'Q': case 'q': case ESC:
          window::close();
          break;
       case 'H': case 'h':
-         //move_selected_object (
+         move_selected_object (-window::delta, 0); 
          break;
       case 'J': case 'j':
-         //move_selected_object (
+         move_selected_object (0, -window::delta);
          break;
       case 'K': case 'k':
-         //move_selected_object (
+         move_selected_object (0, window::delta);
          break;
       case 'L': case 'l':
-         //move_selected_object (
+         move_selected_object (window::delta, 0); 
          break;
-      case 'N': case 'n': case SPACE: case TAB:
+     case 'N': case 'n': case SPACE: case TAB:
+         if (selected_obj != window::objects.size() - 1)
+            window::selected_obj += 1;
+         else
+            window::selected_obj = 0;
          break;
       case 'P': case 'p': case BS:
+         if (selected_obj != 0)
+            window::selected_obj -= 1;
+         else
+            window::selected_obj = objects.size() - 1;
          break;
       case '0'...'9':
-         //select_object (key - '0');
+         window::selected_obj = key - '0';
          break;
       default:
-         cerr << unsigned (key) << ": invalid keystroke" << endl;
+         cerr << (unsigned)key << ": invalid keystroke" << endl;
          break;
    }
    glutPostRedisplay();
 }
 
-
+
 // Executed when a special function key is pressed.
 void window::special (int key, int x, int y) {
    DEBUGF ('g', "key=" << key << ", x=" << x << ", y=" << y);
    window::mus.set (x, y);
    switch (key) {
       case GLUT_KEY_LEFT: //move_selected_object (-1, 0); break;
+         window::objects[selected_obj].move(-1, 0);
+         break;
       case GLUT_KEY_DOWN: //move_selected_object (0, -1); break;
+         window::objects[selected_obj].move(0, -1);
+         break;
       case GLUT_KEY_UP: //move_selected_object (0, +1); break;
+         window::objects[selected_obj].move(0, 1);
+         break;
       case GLUT_KEY_RIGHT: //move_selected_object (+1, 0); break;
+         window::objects[selected_obj].move(1, 0);
+         break;
       case GLUT_KEY_F1: //select_object (1); break;
+         selected_obj = 1;
+         break;
       case GLUT_KEY_F2: //select_object (2); break;
+         selected_obj = 2;
+         break;
       case GLUT_KEY_F3: //select_object (3); break;
+         selected_obj = 3;
+         break;
       case GLUT_KEY_F4: //select_object (4); break;
+         selected_obj = 4;
+         break;
       case GLUT_KEY_F5: //select_object (5); break;
+         selected_obj = 5;
+         break;
       case GLUT_KEY_F6: //select_object (6); break;
+         selected_obj = 6;
+         break;
       case GLUT_KEY_F7: //select_object (7); break;
+         selected_obj = 7;
+         break;
       case GLUT_KEY_F8: //select_object (8); break;
+         selected_obj = 8;
+         break;
       case GLUT_KEY_F9: //select_object (9); break;
+         selected_obj = 9;
+         break;
       case GLUT_KEY_F10: //select_object (10); break;
+         selected_obj = 10;
+         break;
       case GLUT_KEY_F11: //select_object (11); break;
+         selected_obj = 11;
+         break;
       case GLUT_KEY_F12: //select_object (12); break;
+         selected_obj = 12;
+         break;
       default:
-         cerr << unsigned (key) << ": invalid function key" << endl;
+         cerr << (unsigned)key << ": invalid function key" << endl;
          break;
    }
    glutPostRedisplay();
 }
 
-
+
 void window::motion (int x, int y) {
    DEBUGF ('g', "x=" << x << ", y=" << y);
    window::mus.set (x, y);
@@ -163,7 +219,6 @@ void window::passivemotion (int x, int y) {
    window::mus.set (x, y);
    glutPostRedisplay();
 }
-
 void window::mousefn (int button, int state, int x, int y) {
    DEBUGF ('g', "button=" << button << ", state=" << state
            << ", x=" << x << ", y=" << y);
@@ -189,16 +244,30 @@ void window::main () {
    glutPassiveMotionFunc (window::passivemotion);
    glutMouseFunc (window::mousefn);
    DEBUGF ('g', "Calling glutMainLoop()");
+
    glutMainLoop();
 }
 
-
+void window::move_selected_object(int x, int y) {
+   objects.at(selected_obj).move(x, y);
+}
+
+void window::select_object(int index) {
+   window::selected_obj = index;
+}
+
 void mouse::state (int button, int state) {
    switch (button) {
       case GLUT_LEFT_BUTTON: left_state = state; break;
       case GLUT_MIDDLE_BUTTON: middle_state = state; break;
       case GLUT_RIGHT_BUTTON: right_state = state; break;
    }
+}
+
+object::object(const shared_ptr<shape>& s, vertex& pos, rgbcolor& col){
+   pshape = s;
+   center = pos;
+   color = col;
 }
 
 void mouse::draw() {
@@ -212,12 +281,93 @@ void mouse::draw() {
       void* font = GLUT_BITMAP_HELVETICA_18;
       glColor3ubv (color.ubvec);
       glRasterPos2i (10, 10);
-      auto ubytes = reinterpret_cast<const GLubyte*>
-                    (text.str().c_str());
-      glutBitmapString (font, ubytes);
+      glutBitmapString (font, (GLubyte*) text.str().c_str());
    }
 }
 
+@
+
+
+1.3
+log
+@-
+@
+text
+@d1 1
+a1 1
+// $Id: graphics.cpp,v 1.2 2016-07-20 21:32:12-07 - - $
+d11 2
+d17 4
+d23 4
+d48 3
+a50 1
+   for (auto& object: window::objects) object.draw();
+a68 1
+
+d70 1
+d72 1
+a72 2
+   enum {BS = 8, TAB = 9, ESC = 27, SPACE = 32, DEL = 127};
+   DEBUGF ('g', "key=" << unsigned (key) << ", x=" << x << ", y=" << y);
+d79 1
+a79 1
+         //move_selected_object (
+d82 1
+a82 1
+         //move_selected_object (
+d85 1
+a85 1
+         //move_selected_object (
+d88 1
+a88 1
+         //move_selected_object (
+d90 5
+a94 1
+      case 'N': case 'n': case SPACE: case TAB:
+d97 4
+d103 1
+a103 1
+         //select_object (key - '0');
+d106 1
+a106 1
+         cerr << unsigned (key) << ": invalid keystroke" << endl;
+d112 1
+a112 1
+
+d119 2
+d122 2
+d125 2
+d128 2
+d131 2
+d134 2
+d137 2
+d140 2
+d143 2
+d146 2
+d149 2
+d152 2
+d155 2
+d158 2
+d161 2
+d164 2
+d167 1
+a167 1
+         cerr << unsigned (key) << ": invalid function key" << endl;
+d173 1
+a173 1
+
+a184 1
+
+d210 1
+d214 8
+a221 1
+
+d230 6
+d247 1
+a247 3
+      auto ubytes = reinterpret_cast<const GLubyte*>
+                    (text.str().c_str());
+      glutBitmapString (font, ubytes);
 @
 
 

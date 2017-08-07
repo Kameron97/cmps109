@@ -1,9 +1,14 @@
-head	1.1;
+head	1.2;
 access;
 symbols;
 locks;
 comment	@ * @;
 
+
+1.2
+date	2017.08.07.04.28.05;	author -;	state -;
+branches;
+next	1.1;
 
 1.1
 date	2015.07.16.23.47.51;	author -;	state -;
@@ -15,12 +20,14 @@ desc
 @@
 
 
-1.1
+1.2
 log
 @-
 @
 text
-@// $Id: graphics.h,v 1.1 2015-07-16 16:39:04-07 - - $
+@// $Id: graphics.h,v 1.1 2015-07-16 16:47:51-07 - - $
+
+
 
 #ifndef __GRAPHICS_H__
 #define __GRAPHICS_H__
@@ -41,6 +48,8 @@ class object {
       rgbcolor color;
    public:
       // Default copiers, movers, dtor all OK.
+      //constructor for object
+      object(const shared_ptr<shape>&, vertex&, rgbcolor&);
       void draw() { pshape->draw (center, color); }
       void move (GLfloat delta_x, GLfloat delta_y) {
          center.xpos += delta_x;
@@ -63,7 +72,7 @@ class mouse {
       void draw();
 };
 
-
+
 class window {
       friend class mouse;
    private:
@@ -83,6 +92,12 @@ class window {
       static void passivemotion (int x, int y);
       static void mousefn (int button, int state, int x, int y);
    public:
+      static float delta;
+      static float thickness;
+      static bool draw_border;
+      static string border_color;
+      static void move_selected_object(int x, int y);
+      static void select_object(int index);
       static void push_back (const object& obj) {
                   objects.push_back (obj); }
       static void setwidth (int width_) { width = width_; }
@@ -92,4 +107,20 @@ class window {
 
 #endif
 
+@
+
+
+1.1
+log
+@-
+@
+text
+@d1 3
+a3 1
+// $Id: graphics.h,v 1.1 2015-07-16 16:39:04-07 - - $
+d24 2
+d48 1
+a48 1
+
+d68 6
 @

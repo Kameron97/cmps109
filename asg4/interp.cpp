@@ -14,6 +14,7 @@ using namespace std;
 #include "shape.h"
 #include "util.h"
 
+//functions
 unordered_map<string,interpreter::interpreterfn>
 interpreter::interp_map {
    {"define" , &interpreter::do_define },
@@ -21,7 +22,7 @@ interpreter::interp_map {
    {"border" , &interpreter::do_border },
    {"moveby" , &interpreter::do_moveby }
 };
-
+//shapes supported by program
 unordered_map<string,interpreter::factoryfn>
 interpreter::factory_map {
    {"text"           , &interpreter::make_text           },
