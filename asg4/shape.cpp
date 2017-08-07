@@ -102,33 +102,19 @@ void text::draw (const vertex& center, const rgbcolor& color) const {
 
 void ellipse::draw (const vertex& center, const rgbcolor& color) const {
   DEBUGF ('d', this << "(" << center << "," << color << ")");
-    
-    const float i = 2 * M_PI / 32;
-
-    if (window::draw_border) {
-      glLineWidth(window::thickness);
-      glBegin(GL_LINE_LOOP);
-      glColor3ubv(rgbcolor(window::border_color).ubvec);  
-    
-      for (float angle = 0; angle < 2 * M_PI; angle += i) {
-        float x = dimension.xpos/2 * cos(angle) + center.xpos;
-        float y = dimension.ypos/2 * sin(angle) + center.ypos;
-        glVertex2f(x, y);
-      }
-      glEnd();
-    }  
-
-    glBegin(GL_POLYGON);
-    glColor3ubv(color.ubvec);   
-
-    for (float angle = 0; angle < 2 * M_PI; angle += i) {
-      float x = dimension.xpos/2 * cos(angle) + center.xpos;
-      float y = dimension.ypos/2 * sin(angle) + center.ypos;
-      glVertex2f(x, y);
-    }
-    glEnd();
-    
-
+   glBegin (GL_POLYGON);
+   glEnable (GL_LINE_SMOOTH);
+   glColor3ubv (color.ubvec);
+   const float delta = 2 * M_PI / 32;
+   float width = dimension.xpos;
+   float height = dimension.ypos;
+   for (float theta = 0; theta < 2 * M_PI; theta += delta) {
+      float x = width * cos (theta) + center.xpos;
+      float y = height * sin (theta) + center.ypos;
+      glVertex2f (x, y);
+   }
+   glEnd();
+   cout << "end\n";
 }
 
 void polygon::draw (const vertex& center, const rgbcolor& color) const {
