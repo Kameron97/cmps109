@@ -109,12 +109,11 @@ void ellipse::draw (const vertex& center, const rgbcolor& color) const {
    const float delta = 2 * M_PI / 32;
    float width = dimension.xpos;
    float height = dimension.ypos;
-   float theta = 0
-   while ( theta < 2 * M_PI) {
+   
+   for (float theta = 0; theta < 2 * M_PI; theta += delta) {
       float x = width * cos (theta) + center.xpos;
       float y = height * sin (theta) + center.ypos;
       glVertex2f (x, y);
-      theta += delta
    }
    glEnd();
    cout << "end\n";
@@ -122,8 +121,13 @@ void ellipse::draw (const vertex& center, const rgbcolor& color) const {
 
 void polygon::draw (const vertex& center, const rgbcolor& color) const {
    DEBUGF ('d', this << "(" << center << "," << color << ")");
+   //cout << "av: " << aver_ver.xpos << " , " << aver_ver.ypos << endl;
    
    vertex_list vl = update_center(vertices, center);
+   //auto it = vl.begin();
+   //cout << "center: \n";
+   //for ( ; it != vl.end(); ++it) 
+      //cout << "{ " << it->xpos << " , " << it->ypos << " }" << endl;
    glBegin (GL_POLYGON);
    glColor3ubv (color.ubvec);
    for (size_t i = 0; i < vl.size(); ++i)
