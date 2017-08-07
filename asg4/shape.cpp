@@ -122,28 +122,12 @@ void ellipse::draw (const vertex& center, const rgbcolor& color) const {
 
 void polygon::draw (const vertex& center, const rgbcolor& color) const {
    DEBUGF ('d', this << "(" << center << "," << color << ")");
-
-   if (window::draw_border) {
-      glLineWidth(window::thickness);
-      glBegin(GL_LINE_LOOP);
-      glColor3ubv(rgbcolor(window::border_color).ubvec);  
-      
-      for (vertex v : vertices) {
-        float x = center.xpos + v.xpos;
-        float y = center.ypos + v.ypos;
-        glVertex2f(x,y);
-      }
-      glEnd();
-   }
-
+   
+   vertex_list vl = update_center(vertices, center);
    glBegin (GL_POLYGON);
    glColor3ubv (color.ubvec);
-   for (vertex v : vertices) {
-      float x = center.xpos + v.xpos;
-      float y = center.ypos + v.ypos;
-      glVertex2f(x,y);
-   }
-  
+   for (size_t i = 0; i < vl.size(); ++i)
+      glVertex2f(vl.at(i).xpos, vl.at(i).ypos);
    glEnd();
 }
 
