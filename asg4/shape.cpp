@@ -119,6 +119,24 @@ void shape::show (ostream& out) const {
    out << this << "->" << demangle (*this) << ": ";
 }
 
+vertex_list update_center(const vertex_list & vl, 
+                          const vertex & cen) {
+   vertex_list res;
+   vertex av = get_aver_vertices(vl);
+   vertex diff;
+   diff.xpos = cen.xpos - av.xpos;
+   diff.ypos = cen.ypos - av.ypos;
+   //cout << "diff.xpos: " << diff.xpos 
+   //<< " diff.ypos: " << diff.ypos << endl;
+   for (size_t i = 0; i < vl.size(); ++i) {
+      vertex v;
+      v.xpos = vl.at(i).xpos + diff.xpos;
+      v.ypos = vl.at(i).ypos + diff.ypos;
+      res.push_back(v);
+   }
+   return res;
+}
+
 void text::show (ostream& out) const {
    shape::show (out);
    out << glut_bitmap_font << "(" << fontname[glut_bitmap_font]

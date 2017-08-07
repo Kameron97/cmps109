@@ -1,4 +1,4 @@
-// $Id: interp.h,v 1.2 2016-05-04 16:26:26-07 - - $
+
 
 #ifndef __INTERP_H__
 #define __INTERP_H__
@@ -21,10 +21,11 @@ class interpreter {
       void interpret (const parameters&);
       interpreter() {}
       ~interpreter();
+
+   private:
       interpreter (const interpreter&) = delete;
       interpreter& operator= (const interpreter&) = delete;
 
-   private:
       using interpreterfn = void (*) (param, param);
       using factoryfn = shape_ptr (*) (param, param);
 
@@ -34,6 +35,8 @@ class interpreter {
 
       static void do_define (param begin, param end);
       static void do_draw (param begin, param end);
+      static void do_border (param begin, param end);
+      static void do_moveby (param begin, param end);
 
       static shape_ptr make_shape (param begin, param end);
       static shape_ptr make_text (param begin, param end);
@@ -42,6 +45,11 @@ class interpreter {
       static shape_ptr make_polygon (param begin, param end);
       static shape_ptr make_rectangle (param begin, param end);
       static shape_ptr make_square (param begin, param end);
+      static shape_ptr make_diamond (param begin, param end);
+      static shape_ptr make_triangle (param begin, param end);
+      static shape_ptr make_right_triangle (param begin, param end);
+      static shape_ptr make_isosceles (param begin, param end);
+      static shape_ptr make_equilateral (param begin, param end);
       static shape_ptr make_line (param begin, param end);
 };
 
