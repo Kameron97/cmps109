@@ -80,8 +80,7 @@ triangle::triangle (const vertex_list& vertices): polygon(vertices) {
 
 
 
- // TIM, PLEASE
- // VERIFY EQUILATERAL
+
 equilateral::equilateral(GLfloat width): 
     triangle({{-width/2, 0}, {0 ,width/2*sqrtf(3)},
             {width/2,0}}){
@@ -110,12 +109,6 @@ void ellipse::draw (const vertex& center, const rgbcolor& color) const {
    float width = dimension.xpos;
    float height = dimension.ypos;
 
-
-   if (window::draw_border) {
-      glLineWidth(window::thickness);
-      glBegin(GL_LINE_LOOP);
-      glColor3ubv(rgbcolor(window::border_color).ubvec);  
-
    for (float theta = 0; theta < 2 * M_PI; theta += i) {
       float x = width * cos (theta) + center.xpos;
       float y = height * sin (theta) + center.ypos;
@@ -123,7 +116,6 @@ void ellipse::draw (const vertex& center, const rgbcolor& color) const {
    }
    glEnd();
    cout << "end\n";
-}
 }
 
 void polygon::draw (const vertex& center, const rgbcolor& color) const {
