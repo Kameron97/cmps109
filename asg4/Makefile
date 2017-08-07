@@ -1,60 +1,75 @@
+# Tim Mertogul
+# tmertogu@ucsc.edu
+# Michael Lowe
+# mimlowe@ucsc.edu
+# CMPS109
+# Spring 2015
+# ASG 4
 
 MKFILE      = Makefile
 DEPFILE     = ${MKFILE}.dep
 NOINCL      = ci clean spotless
 NEEDINCL    = ${filter ${NOINCL}, ${MAKECMDGOALS}}
-WARNINGS    = -Wall -Wextra -Wold-style-cast
-GPP         = g++ -std=gnu++14 -g -O0 -rdynamic ${WARNINGS}
+GMAKE       = ${MAKE} --no-print-directory
+COMPILECPP  = g++ -g -O0 -Wall -Wextra -std=gnu++11
+MAKEDEPCPP  = g++ -MM -std=gnu++11
 
-MODULES     = debug graphics interp rgbcolor shape util main
-CPPHEADER   = $(wildcard ${MODULES:=.h})
-CPPSOURCE   = $(wildcard ${MODULES:=.cpp})
-TCCFILES    = $(wildcard ${MODULES:=.tcc})
+MODULES     = debug graphics interp rgbcolor shape util
+CPPHEADER   = ${MODULES:=.h}
+CPPSOURCE   = ${MODULES:=.cpp} main.cpp
+TEMPLATES   = util.tcc
 GENFILES    = colors.cppgen
-SOURCES     = $(wildcard ${foreach MOD, ${MODULES}, \
-                 ${MOD}.h ${MOD}.tcc ${MOD}.cpp})
-OTHERS      = ${MKFILE} ${DEPFILE} mk-colors.perl
-ALLSOURCES  = ${SOURCES} ${OTHERS}
+OTHERS      = ${MKFILE} README mk-colors.perl
+ALLSOURCES  = ${CPPHEADER} ${TEMPLATES} ${CPPSOURCE} ${OTHERS}
 EXECBIN     = gdraw
 OBJECTS     = ${CPPSOURCE:.cpp=.o}
 LINKLIBS    = -lGL -lGLU -lglut -lm
 
 LISTING     = Listing.ps
-CLASS       = cmps109-wm.w15
-PROJECT     = asg3
+CLASS       = cmps109-wm.s15
+PROJECT     = asg4
 
 all : ${EXECBIN}
-
-echo :
-	- echo ${ALLSOURCES}
+	- checksource ${ALLSOURCES}
 
 ${EXECBIN} : ${OBJECTS}
-	${GPP} -o $@ ${OBJECTS} ${LINKLIBS}
+	${COMPILECPP} -o $@ ${OBJECTS} ${LINKLIBS}
 
 %.o : %.cpp
-	${GPP} -c $<
+	${COMPILECPP} -c $<
 
 colors.cppgen: mk-colors.perl
 	mk-colors.perl >colors.cppgen
 
+ci : ${ALLSOURCES}
+	- checksource ${ALLSOURCES}
+	cid + ${ALLSOURCES}
 
 lis : ${ALLSOURCES}
 	mkpspdf ${LISTING} ${ALLSOURCES} ${DEPFILE}
 
 clean :
-	- rm ${OBJECTS} ${DEPFILE} core ${GENFILES}
+	- rm ${OBJECTS} ${DEPFILE} ${GENFILES} *.log gdraw
 
 spotless : clean
 	- rm ${EXECBIN} ${LISTING} ${LISTING:.ps=.pdf}
 
-
+redo : spotless
+	make
+	clear
+
+run : spotless
+	mk.build
+	mk.tests
+	clear
+	
 submit : ${ALLSOURCES}
 	- checksource ${ALLSOURCES}
 	submit ${CLASS} ${PROJECT} ${ALLSOURCES}
 
-dep : ${CPPSOURCE} ${CPPHEADER} ${TCCFILES} ${GENFILES}
+dep : ${CPPSOURCE} ${CPPHEADER} ${GENFILES}
 	@ echo "# ${DEPFILE} created `LC_TIME=C date`" >${DEPFILE}
-	${GPP} -MM ${CPPSOURCE} >>${DEPFILE}
+	${MAKEDEPCPP} ${CPPSOURCE} >>${DEPFILE}
 
 ${DEPFILE} :
 	@ touch ${DEPFILE}
