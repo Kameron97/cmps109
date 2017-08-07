@@ -45,7 +45,9 @@ void window::entry (int mouse_entered) {
 // Called to display the objects in the window.
 void window::display() {
    glClear (GL_COLOR_BUFFER_BIT);
-   for (auto& object: window::objects) object.draw();
+   for (auto& object: window::objects) {
+      object.draw();
+   }
    mus.draw();
    glutSwapBuffers();
 }
@@ -74,30 +76,58 @@ void window::keyboard (GLubyte key, int x, int y) {
          window::close();
          break;
       case 'H': case 'h':
-         move_selected_object (-window::delta, 0); 
+         //move_selected_object (
+         if (window::objects[selected_obj].left_bound(0 + window::pixel)) 
+            window::objects[selected_obj].move(window::width, 0);
+         else {
+            GLfloat unit0 = window::pixel;
+            window::objects[selected_obj].move(-unit0, 0);
+         }
          break;
       case 'J': case 'j':
-         move_selected_object (0, -window::delta);
+         if (window::objects[selected_obj].down_bound(0 + window::pixel)) 
+            window::objects[selected_obj].move(0, window::height);
+         //move_selected_object (
+         else {
+            GLfloat unit1 = window::pixel;
+            window::objects[selected_obj].move(0, -unit1);
+         }
          break;
       case 'K': case 'k':
-         move_selected_object (0, window::delta);
+         //move_selected_object (
+         if (window::objects[selected_obj].up_bound
+               (window::height-window::pixel)) {
+               GLfloat floor = window::height;
+               window::objects[selected_obj].move(0, -floor);
+         }
+         else
+            window::objects[selected_obj].move(0, window::pixel);
          break;
       case 'L': case 'l':
-         move_selected_object (window::delta, 0); 
+         //move_selected_object (
+         if (window::objects[selected_obj].right_bound
+               (window::width - window::pixel)) {
+               GLfloat left = window::width;
+               window::objects[selected_obj].move(-left, 0);
+         }
+         else
+            window::objects[selected_obj].move(window::pixel, 0);
          break;
-      case 'N': case 'n': case SPACE: case TAB:  
-         if(selected_obj == objects.size()-1) window::selected_obj = -1;
-         select_object (selected_obj+1);
+      case 'N': case 'n': case SPACE: case TAB:
+         if (selected_obj != window::objects.size() - 1)
+            window::selected_obj += 1;
+         else
+            window::selected_obj = 0;
          break;
       case 'P': case 'p': case BS:
-         if(selected_obj == 0) 
-                    window::selected_obj = objects.size();
-         select_object (selected_obj-1);
+         if (selected_obj != 0)
+            window::selected_obj -= 1;
+         else
+            window::selected_obj = objects.size() - 1;
          break;
       case '0'...'9':
-         if((unsigned)key - '0' >= objects.size())  
-            cerr << (unsigned)key << ": invalid object id" << endl;
-         else   select_object (key - '0');
+         //select_object (key - '0');
+         window::selected_obj = key - '0';
          break;
       default:
          cerr << (unsigned)key << ": invalid keystroke" << endl;
@@ -105,7 +135,6 @@ void window::keyboard (GLubyte key, int x, int y) {
    }
    glutPostRedisplay();
 }
-
 
 // Executed when a special function key is pressed.
 void window::special (int key, int x, int y) {
