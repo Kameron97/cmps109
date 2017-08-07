@@ -10,8 +10,8 @@ using namespace std;
 
 
 // Window Defaults go here
-int window::width = 640; // in thicknesss
-int window::height = 480; // in thicknesss
+int window::width = 640; // in pixels
+int window::height = 480; // in pixels
 vector<object> window::objects;
 size_t window::selected_obj = 0;
 bool window::draw_border = false;
@@ -76,44 +76,18 @@ void window::keyboard (GLubyte key, int x, int y) {
          window::close();
          break;
       case 'H': case 'h':
-         //move_selected_object (
-         if (window::objects[selected_obj].left_bound(0 + window::thickness)) 
-            window::objects[selected_obj].move(window::width, 0);
-         else {
-            GLfloat unit0 = window::thickness;
-            window::objects[selected_obj].move(-unit0, 0);
-         }
+         move_selected_object (-window::delta, 0); 
          break;
       case 'J': case 'j':
-         if (window::objects[selected_obj].down_bound(0 + window::thickness)) 
-            window::objects[selected_obj].move(0, window::height);
-         //move_selected_object (
-         else {
-            GLfloat unit1 = window::thickness;
-            window::objects[selected_obj].move(0, -unit1);
-         }
+         move_selected_object (0, -window::delta);
          break;
       case 'K': case 'k':
-         //move_selected_object (
-         if (window::objects[selected_obj].up_bound
-               (window::height-window::thickness)) {
-               GLfloat floor = window::height;
-               window::objects[selected_obj].move(0, -floor);
-         }
-         else
-            window::objects[selected_obj].move(0, window::thickness);
+         move_selected_object (0, window::delta);
          break;
       case 'L': case 'l':
-         //move_selected_object (
-         if (window::objects[selected_obj].right_bound
-               (window::width - window::thickness)) {
-               GLfloat left = window::width;
-               window::objects[selected_obj].move(-left, 0);
-         }
-         else
-            window::objects[selected_obj].move(window::thickness, 0);
+         move_selected_object (window::delta, 0); 
          break;
-      case 'N': case 'n': case SPACE: case TAB:
+     case 'N': case 'n': case SPACE: case TAB:
          if (selected_obj != window::objects.size() - 1)
             window::selected_obj += 1;
          else
@@ -135,6 +109,7 @@ void window::keyboard (GLubyte key, int x, int y) {
    }
    glutPostRedisplay();
 }
+
 
 // Executed when a special function key is pressed.
 void window::special (int key, int x, int y) {
