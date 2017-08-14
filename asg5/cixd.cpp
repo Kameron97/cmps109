@@ -3,6 +3,8 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <fstream>
+#include <cstring>
 using namespace std;
 
 #include <libgen.h>
@@ -47,6 +49,83 @@ void reply_ls (accepted_socket& client_sock, cix_header& header) {
    log << "sent " << ls_output.size() << " bytes" << endl;
 }
 
+void reply_get (accepted_socket& client_sock, cix_header& header) {
+  ifstream file {header.filename};
+  string getFile;
+  char buffer[0x1000];
+
+
+
+  if (file.fail()) {
+    log << "No such file: " << header.filename << endl;
+    header.command = cix_command::NAK;
+    header.nbytes = errno;
+    log << "sending header " << header << endl;
+    send_packet(client_sock, &header, sizeof header);
+    return;
+   }
+
+   file.read (buffer, sizeof buffer);
+   getFile.append (buffer);
+   file.close();
+
+  header.command = cix_command::FILE;
+   header.nbytes = getFile.size();
+   memset (header.filename, 0, FILENAME_SIZE);
+   log << "sending header " << header << endl;
+   send_packet (client_sock, &header, sizeof header);
+   send_packet (client_sock, getFile.c_str(), getFile.size());
+   log << "sent " << getFile.size() << " bytes" << endl;  
+}
+
+ 
+
+void reply_put(accepted_socket& client_sock, cix_header& header){
+  char buffer[header.nbytes + 1];
+  recv_packet (client_sock, buffer, header.nbytes);
+  ofstream file {header.filename};
+
+
+   if (file.fail()) {
+    log << header.filename << ": ifstream failed: " 
+                            << strerror (errno) << endl;
+    header.command = cix_command::NAK;
+    header.nbytes = errno;
+    send_packet (client_sock, &header, sizeof header);
+    return;
+   }
+
+   log << "received " << header.nbytes << " bytes" << endl;
+  file.write (buffer, sizeof buffer);
+  file.close();
+  cout << header.filename << " has been created"<< endl; 
+  header.command = cix_command::ACK;
+  memset (header.filename, 0, FILENAME_SIZE);
+  header.nbytes = 0;
+  log << "sending header " << header << endl;
+  send_packet (client_sock, &header, sizeof header);
+}
+
+
+
+
+void reply_rm (accepted_socket& client_sock, cix_header& header) {
+   int rmFile = unlink (header.filename);
+
+   if (rmFile != 0) {
+      log << "Error: " << header.filename << ": " 
+                << strerror (errno) << endl;
+      header.command = cix_command::NAK;
+      header.nbytes = errno;
+      send_packet (client_sock, &header, sizeof header);
+      return;
+   }
+
+   header.command = cix_command::ACK;
+   header.nbytes = 0;
+   send_packet (client_sock, &header, sizeof header);
+}
+
 
 void run_server (accepted_socket& client_sock) {
    log.execname (log.execname() + "-server");
@@ -57,9 +136,19 @@ void run_server (accepted_socket& client_sock) {
          recv_packet (client_sock, &header, sizeof header);
          log << "received header " << header << endl;
          switch (header.command) {
-            case cix_command::LS: 
+           case cix_command::LS: 
                reply_ls (client_sock, header);
                break;
+            case cix_command::GET: 
+               reply_get (client_sock, header);
+               break;
+            case cix_command::RM: 
+               reply_rm (client_sock, header);
+               break;
+               case cix_command::PUT: 
+               reply_put (client_sock, header);
+               break;
+            
             default:
                log << "invalid header from client:" << header << endl;
                break;
@@ -73,6 +162,8 @@ void run_server (accepted_socket& client_sock) {
    log << "finishing" << endl;
    throw cix_exit();
 }
+
+
 
 void fork_cixserver (server_socket& server, accepted_socket& accept) {
    pid_t pid = fork();
@@ -118,6 +209,9 @@ void signal_action (int signal, void (*handler) (int)) {
                    << strerror (errno) << endl;
 }
 
+
+
+
 
 int main (int argc, char** argv) {
    log.execname (basename (argv[0]));
@@ -162,4 +256,3 @@ int main (int argc, char** argv) {
    log << "finishing" << endl;
    return 0;
 }
-
