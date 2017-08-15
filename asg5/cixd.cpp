@@ -152,7 +152,7 @@ void run_server (accepted_socket& client_sock) {
 
                                 default:
                                  log << "invalid header from client:" 
-				        << header << endl;
+                    << header << endl;
                                         break;
                         }
                 }
@@ -177,7 +177,7 @@ void fork_cixserver (server_socket& server, accepted_socket& accept) {
                 accept.close();
                 if (pid < 0) {
                         log << "fork failed: " 
-		        << strerror (errno) << endl;
+              << strerror (errno) << endl;
                 }else {
                         log << "forked cixserver pid " << pid << endl;
                 }
@@ -209,7 +209,7 @@ void signal_action (int signal, void (*handler) (int)) {
         action.sa_flags = 0;
         int rc = sigaction (signal, &action, nullptr);
         if (rc < 0) log << "sigaction " 
-	<< strsignal (signal) << " failed: "
+   << strsignal (signal) << " failed: "
                 << strerror (errno) << endl;
 }
 
@@ -227,7 +227,7 @@ int main (int argc, char** argv) {
                 server_socket listener (port);
                 for (;;) {
                         log << to_string (hostinfo()) 
-				<< " accepting port "
+            << " accepting port "
                                 << to_string (port) << endl;
                         accepted_socket client_sock;
                         for (;;) {
@@ -246,7 +246,7 @@ int main (int argc, char** argv) {
                                 }
                         }
                         log << "accepted " 
-		        << to_string (client_sock) << endl;
+              << to_string (client_sock) << endl;
                         try {
                                 fork_cixserver (listener, client_sock);
                                 reap_zombies();
