@@ -1,4 +1,26 @@
-// $Id: protocol.h,v 1.1 2017-08-15 16:31:59-07 - - $
+head	1.1;
+access;
+symbols;
+locks;
+comment	@ * @;
+
+
+1.1
+date	2017.08.15.23.31.59;	author -;	state -;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.1
+log
+@-
+@
+text
+@// $Id: protocol.h,v 1.3 2016-05-09 16:01:56-07 - - $
 
 #ifndef __PROTOCOL__H__
 #define __PROTOCOL__H__
@@ -34,3 +56,4 @@ in_port_t get_cix_server_port (const vector<string>& args,
 
 #endif
 
+@

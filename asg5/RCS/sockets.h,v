@@ -1,4 +1,26 @@
-// $Id: sockets.h,v 1.1 2017-08-15 16:31:59-07 - - $
+head	1.1;
+access;
+symbols;
+locks;
+comment	@ * @;
+
+
+1.1
+date	2017.08.15.23.31.59;	author -;	state -;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.1
+log
+@-
+@
+text
+@// $Id: sockets.h,v 1.2 2016-05-09 16:01:56-07 - - $
 
 #ifndef __SOCKET_H__
 #define __SOCKET_H__
@@ -146,3 +168,4 @@ string to_string (const in_addr& ipv4_addr);
 
 #endif
 
+@

@@ -1,4 +1,26 @@
-// $Id: sockets.cpp,v 1.1 2017-08-15 16:31:59-07 - - $
+head	1.1;
+access;
+symbols;
+locks;
+comment	@// @;
+
+
+1.1
+date	2017.08.15.23.31.59;	author -;	state -;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.1
+log
+@-
+@
+text
+@// $Id: sockets.cpp,v 1.1 2015-05-12 18:48:40-07 - - $
 
 #include <cerrno>
 #include <cstring>
@@ -189,3 +211,4 @@ string localhost() {
    return hostname;
 }
 
+@
